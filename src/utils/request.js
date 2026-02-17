@@ -6,9 +6,11 @@ import { useAuthStore } from '@/stores/auth'
 const request = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL,
     timeout: 30000,
+    withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
     }
 })
 
@@ -55,6 +57,12 @@ request.interceptors.response.use(
 
                 case 404:
                     ElMessage.error('Không tìm thấy dữ liệu')
+                    break
+
+                case 419:
+                    // CSRF token mismatch
+                    ElMessage.error('Phiên làm việc đã hết hạn. Vui lòng tải lại trang.')
+                    setTimeout(() => window.location.reload(), 1500)
                     break
 
                 case 422:

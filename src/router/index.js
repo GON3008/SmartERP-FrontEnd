@@ -26,18 +26,6 @@ const routes = [
                 meta: { title: 'Quản lý khách hàng' }
             },
             {
-                path: 'customers/create',
-                name: 'CustomerCreate',
-                component: () => import('@/views/customers/Form.vue'),
-                meta: { title: 'Thêm khách hàng' }
-            },
-            {
-                path: 'customers/:id/edit',
-                name: 'CustomerEdit',
-                component: () => import('@/views/customers/Form.vue'),
-                meta: { title: 'Chỉnh sửa khách hàng' }
-            },
-            {
                 path: 'products',
                 name: 'Products',
                 component: () => import('@/views/products/List.vue'),

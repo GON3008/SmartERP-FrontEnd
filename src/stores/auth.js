@@ -31,6 +31,13 @@ export const useAuthStore = defineStore('auth', () => {
             }
             localStorage.setItem('user', JSON.stringify(response.user))
 
+            // Xử lý remember me
+            if (credentials.remember) {
+                saveRememberedCredentials(credentials.email)
+            } else {
+                clearRememberedCredentials()
+            }
+
             return response
         } catch (error) {
             throw error
@@ -52,7 +59,24 @@ export const useAuthStore = defineStore('auth', () => {
             localStorage.removeItem('token')
             localStorage.removeItem('refreshToken')
             localStorage.removeItem('user')
+            // Không xóa remembered credentials để giữ tính năng remember me
         }
+    }
+
+    function saveRememberedCredentials(email) {
+        localStorage.setItem('rememberedEmail', email)
+        localStorage.setItem('rememberMe', 'true')
+    }
+
+    function clearRememberedCredentials() {
+        localStorage.removeItem('rememberedEmail')
+        localStorage.removeItem('rememberMe')
+    }
+
+    function getRememberedCredentials() {
+        const rememberMe = localStorage.getItem('rememberMe') === 'true'
+        const email = localStorage.getItem('rememberedEmail') || ''
+        return { rememberMe, email }
     }
 
     async function fetchUserProfile() {
@@ -92,5 +116,7 @@ export const useAuthStore = defineStore('auth', () => {
         fetchUserProfile,
         hasPermission,
         hasRole,
+        getRememberedCredentials,
+        clearRememberedCredentials,
     }
 })
