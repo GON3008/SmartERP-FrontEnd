@@ -13,11 +13,6 @@
         label-position="left"
       >
         <el-row :gutter="20">
-          <el-col :xs="24" :md="12">
-            <el-form-item label="Mã khách hàng" prop="code">
-              <el-input v-model="form.code" placeholder="Nhập mã khách hàng" />
-            </el-form-item>
-          </el-col>
           
           <el-col :xs="24" :md="12">
             <el-form-item label="Tên khách hàng" prop="name">
@@ -112,9 +107,6 @@ const form = reactive({
 })
 
 const rules = {
-  code: [
-    { required: true, message: 'Vui lòng nhập mã khách hàng', trigger: 'blur' }
-  ],
   name: [
     { required: true, message: 'Vui lòng nhập tên khách hàng', trigger: 'blur' }
   ],

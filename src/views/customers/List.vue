@@ -1,44 +1,20 @@
 <template>
   <div class="customers-container">
-    <!-- Page Header - Desktop only -->
-    <div class="page-header flex-between" v-if="!isMobile">
-      <div>
-        <h1 class="page-title">Quản lý khách hàng</h1>
-        <p class="page-description">Danh sách tất cả khách hàng trong hệ thống</p>
-      </div>
-      <el-button type="primary" :icon="Plus" @click="handleCreate">
-        Thêm khách hàng
-      </el-button>
-    </div>
+    <!-- Reusable Page Header -->
+    <PageHeader
+      :title="$t('customer.title')"
+      :description="$t('customer.description')"
+      :add-label="$t('customer.add')"
+      @add="handleCreate"
+    />
 
-    <!-- Mobile Header -->
-    <div class="mobile-header" v-else>
-      <h2 class="mobile-title">Khách hàng</h2>
-    </div>
-    
-    <!-- Search and Filter -->
-    <el-card class="mb-md search-card">
-      <el-form :inline="!isMobile" :model="searchForm" class="search-form">
-        <el-form-item label="Tìm kiếm" class="search-input">
-          <el-input
-            v-model="searchForm.keyword"
-            placeholder="Tên, email, số điện thoại..."
-            :prefix-icon="Search"
-            clearable
-            @clear="handleSearch"
-            @keyup.enter="handleSearch"
-          />
-        </el-form-item>
-        <el-form-item class="search-buttons">
-          <el-button type="primary" :icon="Search" @click="handleSearch">
-            Tìm kiếm
-          </el-button>
-          <el-button :icon="Refresh" @click="handleReset">
-            Đặt lại
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <!-- Reusable Search Bar -->
+    <SearchBar
+      :placeholder="$t('customer.placeholders.search')"
+      :search-label="$t('common.search')"
+      @search="handleSearch"
+      @reset="handleReset"
+    />
     
     <!-- Desktop Table View -->
     <el-card v-if="!isMobile">
@@ -92,48 +68,18 @@
 
     <!-- Mobile Cards View -->
     <div v-else class="customer-cards" v-loading="loading">
-      <div
+      <MobileCard
         v-for="customer in tableData"
         :key="customer.id"
-        class="customer-card"
+        :title="customer.name"
+        :icon="User"
+        :actions="cardActions"
+        @action="(cmd) => handleCardAction(cmd, customer)"
       >
-        <div class="card-header">
-          <div class="customer-name">
-            <el-icon class="name-icon"><User /></el-icon>
-            <h3>{{ customer.name }}</h3>
-          </div>
-          <el-dropdown trigger="click" @command="(cmd) => handleCardAction(cmd, customer)">
-            <el-icon class="more-icon"><MoreFilled /></el-icon>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item command="edit">
-                  <el-icon><Edit /></el-icon>
-                  Chỉnh sửa
-                </el-dropdown-item>
-                <el-dropdown-item command="delete">
-                  <el-icon><Delete /></el-icon>
-                  Xóa
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </div>
-        
-        <div class="card-body">
-          <div class="info-row" v-if="customer.email">
-            <el-icon class="info-icon"><Message /></el-icon>
-            <span class="info-text">{{ customer.email }}</span>
-          </div>
-          <div class="info-row" v-if="customer.phone">
-            <el-icon class="info-icon"><Phone /></el-icon>
-            <span class="info-text">{{ customer.phone }}</span>
-          </div>
-          <div class="info-row" v-if="customer.address">
-            <el-icon class="info-icon"><Location /></el-icon>
-            <span class="info-text">{{ customer.address }}</span>
-          </div>
-        </div>
-      </div>
+        <CardInfoRow :icon="Message" :value="customer.email" />
+        <CardInfoRow :icon="Phone" :value="customer.phone" />
+        <CardInfoRow :icon="Location" :value="customer.address" />
+      </MobileCard>
 
       <!-- Mobile Pagination -->
       <div class="mobile-pagination" v-if="tableData.length > 0">
@@ -177,27 +123,26 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, watch } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import {
-  Plus, Search, Refresh, Edit, Delete, User,
-  MoreFilled, Message, Phone, Location
-} from '@element-plus/icons-vue'
+import { useI18n } from 'vue-i18n'
+import { Plus, Edit, Delete, User, Message, Phone, Location } from '@element-plus/icons-vue'
 import { getCustomers, deleteCustomer } from '@/api/customer'
 import CustomerFormModal from '@/components/customers/CustomerFormModal.vue'
 import { useResponsive } from '@/composables/useResponsive'
+import PageHeader from '@/components/common/PageHeader.vue'
+import SearchBar from '@/components/common/SearchBar.vue'
+import MobileCard from '@/components/common/MobileCard.vue'
+import CardInfoRow from '@/components/common/CardInfoRow.vue'
 
+const { t } = useI18n()
 const { isMobile } = useResponsive()
 
 const loading = ref(false)
 const tableData = ref([])
 const showModal = ref(false)
 const selectedCustomerId = ref(null)
-let searchTimeout = null
-
-const searchForm = reactive({
-  keyword: ''
-})
+let currentKeyword = ''
 
 const pagination = reactive({
   page: 1,
@@ -205,19 +150,11 @@ const pagination = reactive({
   total: 0
 })
 
-// Auto-search with debounce when typing
-watch(() => searchForm.keyword, (newValue, oldValue) => {
-  // Clear previous timeout
-  if (searchTimeout) {
-    clearTimeout(searchTimeout)
-  }
-  
-  // Set new timeout for debounce (500ms)
-  searchTimeout = setTimeout(() => {
-    pagination.page = 1
-    fetchData()
-  }, 500)
-})
+// Card actions for MobileCard dropdown
+const cardActions = [
+  { command: 'edit', label: t('common.edit'), icon: Edit },
+  { command: 'delete', label: t('common.delete'), icon: Delete }
+]
 
 /**
  * Lấy danh sách khách hàng từ API
@@ -230,9 +167,8 @@ const fetchData = async () => {
       per_page: pagination.pageSize,
     }
     
-    // Thêm keyword nếu có
-    if (searchForm.keyword) {
-      params.search = searchForm.keyword
+    if (currentKeyword) {
+      params.search = currentKeyword
     }
     
     const response = await getCustomers(params)
@@ -260,13 +196,15 @@ const fetchData = async () => {
   }
 }
 
-const handleSearch = () => {
+// Called by SearchBar component
+const handleSearch = (keyword) => {
+  currentKeyword = keyword
   pagination.page = 1
   fetchData()
 }
 
 const handleReset = () => {
-  searchForm.keyword = ''
+  currentKeyword = ''
   pagination.page = 1
   fetchData()
 }

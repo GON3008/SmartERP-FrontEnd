@@ -3,11 +3,35 @@
     <div class="logo-container">
       <transition name="fade">
         <div v-if="!isCollapse" class="logo-full">
-          <div class="logo-icon">⚡</div>
-          <h2 class="logo-title">SmartERP</h2>
+          <div class="logo-icon">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <rect width="28" height="28" rx="8" fill="url(#logoGrad)"/>
+              <path d="M7 14l4 4 10-10" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <defs>
+                <linearGradient id="logoGrad" x1="0" y1="0" x2="28" y2="28">
+                  <stop offset="0%" stop-color="#0ea5e9"/>
+                  <stop offset="100%" stop-color="#0284c7"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div class="logo-text">
+            <span class="logo-title">Smart</span><span class="logo-accent">ERP</span>
+          </div>
         </div>
         <div v-else class="logo-short">
-          <div class="logo-icon">⚡</div>
+          <div class="logo-icon">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <rect width="28" height="28" rx="8" fill="url(#logoGrad2)"/>
+              <path d="M7 14l4 4 10-10" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <defs>
+                <linearGradient id="logoGrad2" x1="0" y1="0" x2="28" y2="28">
+                  <stop offset="0%" stop-color="#0ea5e9"/>
+                  <stop offset="100%" stop-color="#0284c7"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
         </div>
       </transition>
     </div>
@@ -17,7 +41,7 @@
       :collapse="isCollapse"
       :collapse-transition="false"
       background-color="transparent"
-      text-color="rgba(255, 255, 255, 0.7)"
+      text-color="rgba(210, 235, 255, 0.92)"
       active-text-color="#ffffff"
       router
       class="sidebar-menu"
@@ -73,6 +97,12 @@
         <template #title>{{ $t('nav.settings') }}</template>
       </el-menu-item>
     </el-menu>
+
+    <!-- Bottom user badge -->
+    <div v-if="!isCollapse" class="sidebar-footer">
+      <div class="status-dot"></div>
+      <span class="status-text">System Online</span>
+    </div>
   </div>
 </template>
 
@@ -93,78 +123,92 @@ const emit = defineEmits(['menu-click'])
 const route = useRoute()
 const activeMenu = computed(() => route.path)
 
-// Emit event when menu item is clicked (for mobile drawer)
 const handleMenuClick = () => {
   emit('menu-click')
 }
 </script>
 
 <style scoped lang="scss">
+// ─── CSS Variables ──────────────────────────────────────────
+:root {
+  --sidebar-bg-top:    #162d47;
+  --sidebar-bg-mid:    #1a3a5c;
+  --sidebar-bg-bot:    #112438;
+  --accent-cyan:       #0ea5e9;
+  --accent-cyan-soft:  #38bdf8;
+  --accent-cyan-glow:  rgba(14, 165, 233, 0.3);
+  --text-muted:        rgba(210, 235, 255, 0.92);
+  --text-bright:       #ffffff;
+  --item-hover-bg:     rgba(14, 165, 233, 0.15);
+  --item-active-bg:    rgba(14, 165, 233, 0.28);
+  --border-subtle:     rgba(56, 189, 248, 0.3);
+}
+
+// ─── Sidebar Container ───────────────────────────────────────
 .sidebar-container {
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
-  
-  // ✅ Gradient navy → tím sang trọng
-  background: linear-gradient(180deg,
-    #0f172a 0%,
-    #1e1b4b 30%,
-    #1e1035 65%,
-    #0f172a 100%
-  );
-  
-  // Subtle glow effect bên phải
-  box-shadow: 4px 0 24px rgba(124, 58, 237, 0.15);
-  position: relative;
-  
-  // Decorative gradient line bên phải
-  &::after {
+  display: flex;
+  flex-direction: column;
+
+  // Lighter navy blue — clean enterprise
+  background:
+    linear-gradient(180deg,
+      #162d47 0%,
+      #1a3a5c 40%,
+      #163248 75%,
+      #112438 100%
+    );
+
+  // Subtle top-left cyan mesh highlight
+  &::before {
     content: '';
     position: absolute;
-    top: 0;
-    right: 0;
-    width: 1px;
-    height: 100%;
-    background: linear-gradient(180deg,
-      transparent 0%,
-      rgba(124, 58, 237, 0.6) 30%,
-      rgba(99, 102, 241, 0.6) 70%,
-      transparent 100%
-    );
+    top: -60px;
+    left: -60px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(14, 165, 233, 0.12) 0%, transparent 70%);
+    pointer-events: none;
   }
 
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
+  // Right border accent line
+  box-shadow:
+    4px 0 20px rgba(0, 0, 0, 0.4),
+    inset -1px 0 0 rgba(14, 165, 233, 0.15);
+
+  position: relative;
+
+  // Scrollbar
+  &::-webkit-scrollbar { width: 3px; }
+  &::-webkit-scrollbar-track { background: transparent; }
   &::-webkit-scrollbar-thumb {
-    background: rgba(124, 58, 237, 0.4);
+    background: rgba(14, 165, 233, 0.3);
     border-radius: 2px;
   }
 }
 
-// ✅ Logo area
+// ─── Logo ────────────────────────────────────────────────────
 .logo-container {
   height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   position: relative;
-  margin-bottom: 8px;
-  
+
   &::after {
     content: '';
     position: absolute;
     bottom: 0;
-    left: 16px;
-    right: 16px;
+    left: 12px;
+    right: 12px;
     height: 1px;
     background: linear-gradient(90deg,
       transparent,
-      rgba(124, 58, 237, 0.6),
-      rgba(99, 102, 241, 0.6),
+      rgba(14, 165, 233, 0.5),
+      rgba(56, 189, 248, 0.5),
       transparent
     );
   }
@@ -177,19 +221,25 @@ const handleMenuClick = () => {
 }
 
 .logo-icon {
-  font-size: 22px;
-  filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.8));
+  display: flex;
+  align-items: center;
+  filter: drop-shadow(0 0 10px rgba(14, 165, 233, 0.6));
+}
+
+.logo-text {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  line-height: 1;
 }
 
 .logo-title {
-  color: #fff;
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-  background: linear-gradient(135deg, #a78bfa 0%, #818cf8 50%, #67e8f9 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #e0f0ff;
+}
+
+.logo-accent {
+  color: #38bdf8;
+  text-shadow: 0 0 12px rgba(56, 189, 248, 0.7);
 }
 
 .logo-short {
@@ -198,57 +248,60 @@ const handleMenuClick = () => {
   justify-content: center;
 }
 
-// ✅ Menu styling
+// ─── Menu ────────────────────────────────────────────────────
 .sidebar-menu {
   border-right: none !important;
   background: transparent !important;
-  padding: 8px 10px;
+  padding: 10px 8px;
+  flex: 1;
 }
 
 :deep(.el-menu) {
   background: transparent !important;
 }
 
+// Menu items
 :deep(.el-menu-item) {
-  border-radius: 10px;
-  margin-bottom: 4px;
-  font-size: 14px;
+  border-radius: 8px;
+  margin-bottom: 2px;
+  font-size: 13.5px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.65) !important;
-  transition: all 0.25s ease;
-  height: 46px;
-  line-height: 46px;
+  color: rgba(210, 235, 255, 0.92) !important;
+  transition: all 0.2s ease;
+  height: 44px;
+  line-height: 44px;
+  letter-spacing: 0.2px;
 
   .el-icon {
-    font-size: 18px;
-    transition: all 0.25s ease;
+    font-size: 17px;
+    color: rgba(147, 210, 250, 1);
+    transition: all 0.2s ease;
   }
 
   &:hover {
-    background: rgba(124, 58, 237, 0.15) !important;
-    color: rgba(255, 255, 255, 0.95) !important;
-    
+    background: var(--item-hover-bg) !important;
+    color: #ffffff !important;
+
+    * { color: #ffffff !important; }
+
     .el-icon {
-      color: #a78bfa !important;
-      filter: drop-shadow(0 0 6px rgba(167, 139, 250, 0.6));
+      color: var(--accent-cyan-soft) !important;
     }
   }
 
   &.is-active {
-    background: linear-gradient(135deg,
-      rgba(124, 58, 237, 0.5) 0%,
-      rgba(99, 102, 241, 0.4) 100%
-    ) !important;
+    background: var(--item-active-bg) !important;
     color: #ffffff !important;
-    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3),
-                inset 0 0 0 1px rgba(167, 139, 250, 0.3);
+    box-shadow:
+      0 2px 12px rgba(14, 165, 233, 0.25),
+      inset 0 0 0 1px rgba(56, 189, 248, 0.25);
 
     .el-icon {
-      color: #a78bfa !important;
-      filter: drop-shadow(0 0 8px rgba(167, 139, 250, 0.8));
+      color: var(--accent-cyan-soft) !important;
+      filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.7));
     }
 
-    // Active indicator line bên trái
+    // Left indicator
     &::before {
       content: '';
       position: absolute;
@@ -256,74 +309,133 @@ const handleMenuClick = () => {
       top: 50%;
       transform: translateY(-50%);
       width: 3px;
-      height: 60%;
-      background: linear-gradient(180deg, #a78bfa, #818cf8);
+      height: 55%;
+      background: linear-gradient(180deg, #38bdf8, #0ea5e9);
       border-radius: 0 3px 3px 0;
+      box-shadow: 0 0 8px rgba(14, 165, 233, 0.7);
     }
   }
 }
 
+// Sub-menu title
 :deep(.el-sub-menu__title) {
-  border-radius: 10px;
-  margin-bottom: 4px;
-  font-size: 14px;
+  border-radius: 8px;
+  margin-bottom: 2px;
+  font-size: 13.5px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.65) !important;
-  transition: all 0.25s ease;
-  height: 46px;
-  line-height: 46px;
+  color: rgba(210, 235, 255, 0.92) !important;
+  transition: all 0.2s ease;
+  height: 44px;
+  line-height: 44px;
 
   .el-icon {
-    font-size: 18px;
-    transition: all 0.25s ease;
+    font-size: 17px;
+    color: rgba(147, 210, 250, 1);
+    transition: all 0.2s ease;
   }
 
   .el-sub-menu__icon-arrow {
-    color: rgba(255, 255, 255, 0.4) !important;
+    color: rgba(147, 210, 250, 0.7) !important;
   }
 
   &:hover {
-    background: rgba(124, 58, 237, 0.15) !important;
-    color: rgba(255, 255, 255, 0.95) !important;
+    background: var(--item-hover-bg) !important;
+    color: #ffffff !important;
+
+    * { color: #ffffff !important; }
 
     .el-icon {
-      color: #a78bfa !important;
+      color: var(--accent-cyan-soft) !important;
     }
   }
 }
 
-// Sub-menu popup background
+// Sub-menu open state highlight
+:deep(.el-sub-menu.is-opened > .el-sub-menu__title) {
+  color: var(--text-bright) !important;
+  .el-icon { color: var(--accent-cyan-soft) !important; }
+}
+
+// Sub-menu children
 :deep(.el-sub-menu .el-menu) {
-  background: rgba(15, 23, 42, 0.8) !important;
-  backdrop-filter: blur(10px);
-  padding: 4px 0;
-  
+  background: transparent !important;
+  padding: 2px 0;
+
   .el-menu-item {
-    height: 40px;
-    line-height: 40px;
-    padding-left: 52px !important;
+    height: 38px;
+    line-height: 38px;
+    padding-left: 50px !important;
     font-size: 13px;
     border-radius: 8px;
-    color: rgba(255, 255, 255, 0.55) !important;
+    color: rgba(190, 225, 255, 0.9) !important;
+    margin-bottom: 1px;
+    position: relative;
+
+    // Subtle left line connector
+    &::after {
+      content: '';
+      position: absolute;
+      left: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 1px;
+      background: rgba(56, 189, 248, 0.2);
+    }
 
     &:hover {
-      background: rgba(124, 58, 237, 0.15) !important;
-      color: rgba(255, 255, 255, 0.9) !important;
+      background: var(--item-hover-bg) !important;
+      color: rgba(224, 240, 255, 0.9) !important;
     }
 
     &.is-active {
-      color: #a78bfa !important;
-      background: rgba(124, 58, 237, 0.2) !important;
+      color: #38bdf8 !important;
+      background: rgba(14, 165, 233, 0.12) !important;
     }
   }
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease;
+// ─── Footer ──────────────────────────────────────────────────
+.sidebar-footer {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid rgba(14, 165, 233, 0.1);
+  margin: 4px 8px 8px;
+  border-radius: 0 0 8px 8px;
 }
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22d3ee;
+  box-shadow: 0 0 6px rgba(34, 211, 238, 0.8);
+  animation: pulse 2.5s ease-in-out infinite;
+  flex-shrink: 0;
 }
+
+.status-text {
+  font-size: 11.5px;
+  color: rgba(148, 210, 245, 0.7);
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(34, 211, 238, 0.8); }
+  50%       { opacity: 0.6; box-shadow: 0 0 12px rgba(34, 211, 238, 0.4); }
+}
+
+// ─── Global Element Plus hover override ──────────────────────
+:deep(.el-menu-item:hover),
+:deep(.el-sub-menu__title:hover) {
+  color: #ffffff !important;
+  span { color: #ffffff !important; }
+}
+
+// ─── Transition ──────────────────────────────────────────────
+.fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease; }
+.fade-enter-from, .fade-leave-to       { opacity: 0; }
 </style>

@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
+import router from '@/router'
 
 // Tạo instance axios
 const request = axios.create({
@@ -13,6 +14,9 @@ const request = axios.create({
         'X-Requested-With': 'XMLHttpRequest',
     }
 })
+
+// Flag để tránh logout nhiều lần liên tiếp
+let isLoggingOut = false
 
 // Request interceptor - Thêm token vào header
 request.interceptors.request.use(
@@ -46,9 +50,23 @@ request.interceptors.response.use(
             switch (status) {
                 case 401:
                     // Token hết hạn hoặc không hợp lệ
-                    ElMessage.error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.')
-                    authStore.logout()
-                    window.location.href = '/login'
+                    // Tránh gọi nhiều lần khi có nhiều request đồng thời
+                    if (!isLoggingOut) {
+                        isLoggingOut = true
+                        ElMessage.error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.')
+                        // Xóa token đồng bộ khỏi store và localStorage trước
+                        authStore.token = ''
+                        authStore.user = null
+                        authStore.refreshToken = ''
+                        localStorage.removeItem('token')
+                        localStorage.removeItem('refreshToken')
+                        localStorage.removeItem('user')
+                        // Redirect về login sau khi đã xóa token
+                        setTimeout(() => {
+                            isLoggingOut = false
+                            router.push({ name: 'Login' })
+                        }, 1500)
+                    }
                     break
 
                 case 403:
@@ -83,7 +101,10 @@ request.interceptors.response.use(
                     ElMessage.error(data.message || 'Có lỗi xảy ra')
             }
         } else if (error.request) {
-            ElMessage.error('Lỗi kết nối mạng. Vui lòng kiểm tra kết nối internet.')
+            // Không hiện lỗi mạng nếu đang trong quá trình logout
+            if (!isLoggingOut) {
+                ElMessage.error('Lỗi kết nối mạng. Vui lòng kiểm tra kết nối internet.')
+            }
         } else {
             ElMessage.error('Có lỗi xảy ra: ' + error.message)
         }
