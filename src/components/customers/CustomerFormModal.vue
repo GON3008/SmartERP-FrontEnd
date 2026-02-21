@@ -16,15 +16,6 @@
       :label-position="isMobile ? 'top' : 'left'"
       class="customer-form"
     >
-      <el-form-item label="Mã khách hàng" prop="code">
-        <el-input
-          v-model="formData.code"
-          placeholder="Nhập mã khách hàng"
-          clearable
-          size="large"
-        />
-      </el-form-item>
-
       <el-form-item label="Tên khách hàng" prop="name">
         <el-input
           v-model="formData.name"
@@ -61,25 +52,13 @@
           placeholder="Nhập địa chỉ"
         />
       </el-form-item>
-
-      <el-form-item label="Trạng thái" prop="status">
-        <el-radio-group v-model="formData.status" size="large">
-          <el-radio value="active">Hoạt động</el-radio>
-          <el-radio value="inactive">Không hoạt động</el-radio>
-        </el-radio-group>
-      </el-form-item>
     </el-form>
 
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="handleClose" size="large">Hủy</el-button>
-        <el-button
-          type="primary"
-          :loading="loading"
-          @click="handleSubmit"
-          size="large"
-        >
-          {{ isEdit ? 'Cập nhật' : 'Thêm mới' }}
+        <el-button type="primary" :loading="loading" @click="handleSubmit" size="large">
+          {{ isEdit ? "Cập nhật" : "Thêm mới" }}
         </el-button>
       </div>
     </template>
@@ -87,138 +66,130 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch } from 'vue'
-import { ElMessage } from 'element-plus'
-import { createCustomer, updateCustomer, getCustomer } from '@/api/customer'
-import { useResponsive } from '@/composables/useResponsive'
+import { ref, reactive, computed, watch } from "vue";
+import { ElMessage } from "element-plus";
+import { createCustomer, updateCustomer, getCustomer } from "@/api/customer";
+import { useResponsive } from "@/composables/useResponsive";
 
-const { isMobile } = useResponsive()
+const { isMobile } = useResponsive();
 
 const props = defineProps({
   modelValue: {
     type: Boolean,
-    default: false
+    default: false,
   },
   customerId: {
     type: [Number, String],
-    default: null
-  }
-})
+    default: null,
+  },
+});
 
-const emit = defineEmits(['update:modelValue', 'success'])
+const emit = defineEmits(["update:modelValue", "success"]);
 
 const dialogVisible = computed({
   get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
-})
+  set: (val) => emit("update:modelValue", val),
+});
 
-const isEdit = computed(() => !!props.customerId)
+const isEdit = computed(() => !!props.customerId);
 
-const formRef = ref(null)
-const loading = ref(false)
+const formRef = ref(null);
+const loading = ref(false);
 
 const formData = reactive({
-  code: '',
-  name: '',
-  email: '',
-  phone: '',
-  address: '',
-  status: 'active'
-})
+  name: "",
+  email: "",
+  phone: "",
+  address: "",
+  status: "active",
+});
 
 const formRules = {
-  code: [
-    { required: true, message: 'Vui lòng nhập mã khách hàng', trigger: 'blur' }
-  ],
-  name: [
-    { required: true, message: 'Vui lòng nhập tên khách hàng', trigger: 'blur' }
-  ],
+  name: [{ required: true, message: "Vui lòng nhập tên khách hàng", trigger: "blur" }],
   email: [
-    { required: true, message: 'Vui lòng nhập email', trigger: 'blur' },
-    { type: 'email', message: 'Email không hợp lệ', trigger: 'blur' }
+    { required: true, message: "Vui lòng nhập email", trigger: "blur" },
+    { type: "email", message: "Email không hợp lệ", trigger: "blur" },
   ],
-  phone: [
-    { required: true, message: 'Vui lòng nhập số điện thoại', trigger: 'blur' }
-  ]
-}
+  phone: [{ required: true, message: "Vui lòng nhập số điện thoại", trigger: "blur" }],
+};
 
 // Load dữ liệu khi edit
-watch(() => props.customerId, async (newId) => {
-  if (newId && dialogVisible.value) {
-    await loadCustomerData(newId)
-  }
-}, { immediate: true })
+watch(
+  () => props.customerId,
+  async (newId) => {
+    if (newId && dialogVisible.value) {
+      await loadCustomerData(newId);
+    }
+  },
+  { immediate: true }
+);
 
 watch(dialogVisible, (newVal) => {
   if (newVal && props.customerId) {
-    loadCustomerData(props.customerId)
+    loadCustomerData(props.customerId);
   } else if (!newVal) {
-    resetForm()
+    resetForm();
   }
-})
+});
 
 const loadCustomerData = async (id) => {
-  loading.value = true
+  loading.value = true;
   try {
-    const response = await getCustomer(id)
+    const response = await getCustomer(id);
     Object.assign(formData, {
-      code: response.data.code,
       name: response.data.name,
       email: response.data.email,
       phone: response.data.phone,
       address: response.data.address,
-      status: response.data.status || 'active'
-    })
+    });
   } catch (error) {
-    console.error('Load customer error:', error)
-    ElMessage.error('Tải dữ liệu khách hàng thất bại')
+    console.error("Load customer error:", error);
+    ElMessage.error("Tải dữ liệu khách hàng thất bại");
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const handleSubmit = async () => {
-  if (!formRef.value) return
+  if (!formRef.value) return;
 
   await formRef.value.validate(async (valid) => {
     if (valid) {
-      loading.value = true
+      loading.value = true;
       try {
         if (isEdit.value) {
-          await updateCustomer(props.customerId, formData)
-          ElMessage.success('Cập nhật khách hàng thành công')
+          await updateCustomer(props.customerId, formData);
+          ElMessage.success("Cập nhật khách hàng thành công");
         } else {
-          await createCustomer(formData)
-          ElMessage.success('Thêm khách hàng thành công')
+          await createCustomer(formData);
+          ElMessage.success("Thêm khách hàng thành công");
         }
-        
-        emit('success')
-        handleClose()
+
+        emit("success");
+        handleClose();
       } catch (error) {
-        console.error('Submit error:', error)
-        ElMessage.error(error.response?.data?.message || 'Lưu dữ liệu thất bại')
+        console.error("Submit error:", error);
+        ElMessage.error(error.response?.data?.message || "Lưu dữ liệu thất bại");
       } finally {
-        loading.value = false
+        loading.value = false;
       }
     }
-  })
-}
+  });
+};
 
 const handleClose = () => {
-  dialogVisible.value = false
-}
+  dialogVisible.value = false;
+};
 
 const resetForm = () => {
-  formRef.value?.resetFields()
+  formRef.value?.resetFields();
   Object.assign(formData, {
-    code: '',
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    status: 'active'
-  })
-}
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+  });
+};
 </script>
 
 <style scoped lang="scss">
@@ -226,11 +197,11 @@ const resetForm = () => {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  
+
   @media (max-width: 767px) {
     flex-direction: column-reverse;
     gap: 8px;
-    
+
     .el-button {
       width: 100%;
       margin: 0;
@@ -245,13 +216,13 @@ const resetForm = () => {
       padding: 16px;
       border-bottom: 1px solid #f0f0f0;
     }
-    
+
     .el-dialog__body {
       padding: 16px;
       max-height: calc(100vh - 140px);
       overflow-y: auto;
     }
-    
+
     .el-dialog__footer {
       padding: 16px;
       border-top: 1px solid #f0f0f0;
@@ -269,15 +240,15 @@ const resetForm = () => {
       margin-bottom: 8px;
       font-weight: 500;
     }
-    
+
     :deep(.el-input__inner) {
       min-height: 44px;
     }
-    
+
     :deep(.el-textarea__inner) {
       min-height: 88px;
     }
-    
+
     :deep(.el-radio) {
       margin-right: 20px;
       height: 44px;

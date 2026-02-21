@@ -15,19 +15,19 @@
       @search="handleSearch"
       @reset="handleReset"
     />
-    
+
     <!-- Desktop Table View -->
     <el-card v-if="!isMobile">
-      <el-table
-        v-loading="loading"
-        :data="tableData"
-        stripe
-        style="width: 100%"
-      >
+      <el-table v-loading="loading" :data="tableData" stripe style="width: 100%">
         <el-table-column prop="name" label="Tên khách hàng" min-width="180" />
         <el-table-column prop="email" label="Email" min-width="180" />
         <el-table-column prop="phone" label="Số điện thoại" width="140" />
-        <el-table-column prop="address" label="Địa chỉ" min-width="200" show-overflow-tooltip />
+        <el-table-column
+          prop="address"
+          label="Địa chỉ"
+          min-width="200"
+          show-overflow-tooltip
+        />
         <el-table-column label="Thao tác" width="180" fixed="right">
           <template #default="{ row }">
             <el-button
@@ -51,7 +51,7 @@
           </template>
         </el-table-column>
       </el-table>
-      
+
       <!-- Pagination -->
       <div class="pagination-container">
         <el-pagination
@@ -123,151 +123,157 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { useI18n } from 'vue-i18n'
-import { Plus, Edit, Delete, User, Message, Phone, Location } from '@element-plus/icons-vue'
-import { getCustomers, deleteCustomer } from '@/api/customer'
-import CustomerFormModal from '@/components/customers/CustomerFormModal.vue'
-import { useResponsive } from '@/composables/useResponsive'
-import PageHeader from '@/components/common/PageHeader.vue'
-import SearchBar from '@/components/common/SearchBar.vue'
-import MobileCard from '@/components/common/MobileCard.vue'
-import CardInfoRow from '@/components/common/CardInfoRow.vue'
+import { ref, reactive, onMounted } from "vue";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { useI18n } from "vue-i18n";
+import {
+  Plus,
+  Edit,
+  Delete,
+  User,
+  Message,
+  Phone,
+  Location,
+} from "@element-plus/icons-vue";
+import { getCustomers, deleteCustomer } from "@/api/customer";
+import CustomerFormModal from "@/components/customers/CustomerFormModal.vue";
+import { useResponsive } from "@/composables/useResponsive";
+import PageHeader from "@/components/common/PageHeader.vue";
+import SearchBar from "@/components/common/SearchBar.vue";
+import MobileCard from "@/components/common/MobileCard.vue";
+import CardInfoRow from "@/components/common/CardInfoRow.vue";
 
-const { t } = useI18n()
-const { isMobile } = useResponsive()
+const { t } = useI18n();
+const { isMobile } = useResponsive();
 
-const loading = ref(false)
-const tableData = ref([])
-const showModal = ref(false)
-const selectedCustomerId = ref(null)
-let currentKeyword = ''
+const loading = ref(false);
+const tableData = ref([]);
+const showModal = ref(false);
+const selectedCustomerId = ref(null);
+let currentKeyword = "";
 
 const pagination = reactive({
   page: 1,
   pageSize: 10,
-  total: 0
-})
+  total: 0,
+});
 
 // Card actions for MobileCard dropdown
 const cardActions = [
-  { command: 'edit', label: t('common.edit'), icon: Edit },
-  { command: 'delete', label: t('common.delete'), icon: Delete }
-]
+  { command: "edit", label: t("common.edit"), icon: Edit },
+  { command: "delete", label: t("common.delete"), icon: Delete },
+];
 
 /**
  * Lấy danh sách khách hàng từ API
  */
 const fetchData = async () => {
-  loading.value = true
+  loading.value = true;
   try {
     const params = {
       page: pagination.page,
       per_page: pagination.pageSize,
-    }
-    
+    };
+
     if (currentKeyword) {
-      params.search = currentKeyword
+      params.search = currentKeyword;
     }
-    
-    const response = await getCustomers(params)
-    
+
+    const response = await getCustomers(params);
+
     // Xử lý response từ Laravel API
     if (response.data) {
-      tableData.value = response.data.map(customer => ({
+      tableData.value = response.data.map((customer) => ({
         id: customer.id,
-        code: customer.code,
         name: customer.name,
         email: customer.email,
         phone: customer.phone,
         address: customer.address,
-        status: customer.status || 'active'
-      }))
-      
+      }));
+
       // Cập nhật pagination
-      pagination.total = response.total || response.data.length
+      pagination.total = response.total || response.data.length;
     }
   } catch (error) {
-    console.error('Fetch customers error:', error)
-    ElMessage.error(error.response?.data?.message || 'Tải dữ liệu thất bại')
+    console.error("Fetch customers error:", error);
+    ElMessage.error(error.response?.data?.message || "Tải dữ liệu thất bại");
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 // Called by SearchBar component
 const handleSearch = (keyword) => {
-  currentKeyword = keyword
-  pagination.page = 1
-  fetchData()
-}
+  currentKeyword = keyword;
+  pagination.page = 1;
+  fetchData();
+};
 
 const handleReset = () => {
-  currentKeyword = ''
-  pagination.page = 1
-  fetchData()
-}
+  currentKeyword = "";
+  pagination.page = 1;
+  fetchData();
+};
 
 const handleCreate = () => {
-  selectedCustomerId.value = null
-  showModal.value = true
-}
+  selectedCustomerId.value = null;
+  showModal.value = true;
+};
 
 const handleEdit = (row) => {
-  selectedCustomerId.value = row.id
-  showModal.value = true
-}
+  selectedCustomerId.value = row.id;
+  showModal.value = true;
+};
 
 const handleCardAction = (command, customer) => {
-  if (command === 'edit') {
-    handleEdit(customer)
-  } else if (command === 'delete') {
-    handleDelete(customer)
+  if (command === "edit") {
+    handleEdit(customer);
+  } else if (command === "delete") {
+    handleDelete(customer);
   }
-}
+};
 
 const handleModalSuccess = () => {
-  fetchData()
-}
+  fetchData();
+};
 
 const handleDelete = async (row) => {
   try {
     await ElMessageBox.confirm(
       `Bạn có chắc chắn muốn xóa khách hàng "${row.name}"?`,
-      'Xác nhận xóa',
+      "Xác nhận xóa",
       {
-        confirmButtonText: 'Xóa',
-        cancelButtonText: 'Hủy',
-        type: 'warning'
+        confirmButtonText: "Xóa",
+        cancelButtonText: "Hủy",
+        type: "warning",
       }
-    )
-    
+    );
+
     // Gọi API xóa khách hàng
-    await deleteCustomer(row.id)
-    
-    ElMessage.success('Xóa khách hàng thành công')
-    fetchData()
+    await deleteCustomer(row.id);
+
+    ElMessage.success("Xóa khách hàng thành công");
+    fetchData();
   } catch (error) {
-    if (error !== 'cancel') {
-      console.error('Delete customer error:', error)
-      ElMessage.error(error.response?.data?.message || 'Xóa khách hàng thất bại')
+    if (error !== "cancel") {
+      console.error("Delete customer error:", error);
+      ElMessage.error(error.response?.data?.message || "Xóa khách hàng thất bại");
     }
   }
-}
+};
 
 const handleSizeChange = () => {
-  pagination.page = 1
-  fetchData()
-}
+  pagination.page = 1;
+  fetchData();
+};
 
 const handlePageChange = () => {
-  fetchData()
-}
+  fetchData();
+};
 
 onMounted(() => {
-  fetchData()
-})
+  fetchData();
+});
 </script>
 
 <style scoped lang="scss">
@@ -282,7 +288,7 @@ onMounted(() => {
 // Mobile Header
 .mobile-header {
   margin-bottom: 16px;
-  
+
   .mobile-title {
     font-size: 24px;
     font-weight: 700;
@@ -304,20 +310,20 @@ onMounted(() => {
       width: 100%;
       margin-right: 0;
       margin-bottom: 12px;
-      
+
       :deep(.el-input) {
         width: 100%;
       }
     }
-    
+
     .search-buttons {
       width: 100%;
       margin-right: 0;
-      
+
       .el-button {
         flex: 1;
       }
-      
+
       :deep(.el-form-item__content) {
         display: flex;
         gap: 8px;
@@ -340,7 +346,7 @@ onMounted(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   transition: all 0.3s ease;
-  
+
   &:active {
     transform: scale(0.98);
   }
@@ -352,18 +358,18 @@ onMounted(() => {
   justify-content: space-between;
   padding: 16px;
   border-bottom: 1px solid #f0f0f0;
-  
+
   .customer-name {
     display: flex;
     align-items: center;
     gap: 8px;
     flex: 1;
-    
+
     .name-icon {
       color: #7c3aed;
       font-size: 20px;
     }
-    
+
     h3 {
       margin: 0;
       font-size: 16px;
@@ -371,13 +377,13 @@ onMounted(() => {
       color: var(--text-primary);
     }
   }
-  
+
   .more-icon {
     font-size: 20px;
     color: rgba(0, 0, 0, 0.45);
     cursor: pointer;
     padding: 4px;
-    
+
     &:active {
       transform: scale(0.9);
     }
@@ -395,14 +401,14 @@ onMounted(() => {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  
+
   .info-icon {
     color: rgba(0, 0, 0, 0.45);
     font-size: 16px;
     margin-top: 2px;
     flex-shrink: 0;
   }
-  
+
   .info-text {
     font-size: 14px;
     color: var(--text-secondary);
@@ -428,11 +434,11 @@ onMounted(() => {
   height: 56px;
   box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
   z-index: 999;
-  
+
   &:active {
     transform: scale(0.95);
   }
-  
+
   :deep(.el-icon) {
     font-size: 24px;
   }
