@@ -1,0 +1,106 @@
+// Shared report styles — imported via @import './report-shared.scss' in each report
+
+// ─── Page Layout ──────────────────────────────────────────────
+.report-page {
+  min-height: 100%;
+}
+
+// ─── Header ───────────────────────────────────────────────────
+.report-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    h2 { font-size: 20px; font-weight: 800; color: var(--text-primary); margin: 0 0 4px; }
+    p  { font-size: 13.5px; color: var(--text-secondary); margin: 0; }
+  }
+
+  &__icon {
+    font-size: 26px;
+    padding: 12px;
+    border-radius: 14px;
+    flex-shrink: 0;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+}
+
+// ─── KPI Row ──────────────────────────────────────────────────
+.report-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+
+  @media (max-width: 900px)  { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 480px)  { grid-template-columns: 1fr 1fr; }
+}
+
+.report-kpi {
+  background: var(--bg-card);
+  border-radius: 14px;
+  padding: 18px 20px;
+  border: 1px solid var(--border-color);
+  border-top-width: 3px;
+  transition: box-shadow 0.2s, transform 0.2s;
+
+  &:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.08); transform: translateY(-2px); }
+
+  &__value { font-size: 22px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; }
+  &__label { font-size: 12.5px; color: var(--text-secondary); margin-bottom: 8px; }
+  &__trend {
+    font-size: 12px; font-weight: 600;
+    &.up   { color: #10b981; }
+    &.down { color: #f87171; }
+  }
+}
+
+// ─── Card ─────────────────────────────────────────────────────
+.report-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  padding: 22px 24px;
+  margin-bottom: 18px;
+  transition: box-shadow 0.2s;
+
+  &:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.07); }
+}
+
+.report-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  h3 { font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 0; }
+}
+
+// ─── Table ────────────────────────────────────────────────────
+.report-table {
+  :deep(thead th) { background: var(--bg-page) !important; font-weight: 600; font-size: 12.5px; }
+  :deep(td) { font-size: 13px; }
+}
+
+// ─── Shared helpers ───────────────────────────────────────────
+.text-blue  { color: #0ea5e9; }
+.text-green { color: #10b981; }
+
+// ─── Line Chart ───────────────────────────────────────────────
+.line-chart-wrap { overflow-x: auto; }
+.line-svg { width: 100%; min-width: 500px; height: 240px; display: block; }

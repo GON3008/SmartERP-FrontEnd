@@ -20,7 +20,7 @@
       <Sidebar :is-collapse="false" @menu-click="closeMobileDrawer" />
     </el-drawer>
     
-    <el-container>
+    <el-container class="right-container">
       <el-header class="header">
         <Header
           @toggle-sidebar="toggleSidebar"
@@ -71,12 +71,27 @@ const closeMobileDrawer = () => {
 
 <style scoped lang="scss">
 .main-layout {
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;   /* Toàn bộ layout không scroll ngoài */
 }
 
 .sidebar {
   background-color: #001529;
   transition: width 0.3s ease;
+  overflow: hidden;
+  /* Sidebar cố định chiều cao, không trôi theo scroll */
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  flex-shrink: 0;
+}
+
+.right-container {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
   overflow: hidden;
 }
 
@@ -97,16 +112,18 @@ const closeMobileDrawer = () => {
 .main-content {
   background-color: var(--bg-page);
   padding: 24px;
-  min-height: calc(100vh - 60px);
+  /* Scroll xảy ra ở đây, không phải toàn trang */
+  overflow-y: auto;
+  height: calc(100vh - 60px);
   
   &.has-bottom-bar {
     padding-bottom: calc(56px + env(safe-area-inset-bottom) + 24px);
-    min-height: calc(100vh - 56px - 56px);
+    height: calc(100vh - 56px - 56px);
   }
   
   @media (max-width: 767px) {
     padding: 16px;
-    min-height: calc(100vh - 56px);
+    height: calc(100vh - 56px);
   }
 }
 

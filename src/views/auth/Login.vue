@@ -56,7 +56,7 @@
 
         <el-form-item class="remember-row">
           <el-checkbox v-model="loginForm.remember">Ghi nhớ đăng nhập</el-checkbox>
-          <a class="forgot-link" href="#">Quên mật khẩu?</a>
+          <router-link :to="{ name: 'ForgotPassword' }" class="forgot-link">Quên mật khẩu?</router-link>
         </el-form-item>
 
         <el-form-item>
@@ -71,6 +71,11 @@
           </el-button>
         </el-form-item>
       </el-form>
+
+      <p class="register-link">
+        Chưa có tài khoản?
+        <router-link :to="{ name: 'Register' }">Đăng ký ngay</router-link>
+      </p>
 
       <p class="login-footer">© 2025 SmartERP · Enterprise Resource Planning</p>
     </div>
@@ -456,6 +461,21 @@ $cyan-glow:   rgba(14, 165, 233, 0.35);
   font-size: 12px;
   color: rgba(148, 200, 235, 0.35);
   letter-spacing: 0.3px;
+}
+
+// ─── Register Link ────────────────────────────────────────────
+.register-link {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 13.5px;
+  color: rgba(186, 220, 248, 0.6);
+
+  a {
+    color: $cyan-soft;
+    text-decoration: none;
+    font-weight: 600;
+    &:hover { text-decoration: underline; }
+  }
 }
 
 // ─── Responsive ──────────────────────────────────────────────

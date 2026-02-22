@@ -87,10 +87,17 @@
         <el-menu-item index="/salaries">{{ $t('nav.salaries') }}</el-menu-item>
       </el-sub-menu>
 
-      <el-menu-item index="/reports">
-        <el-icon><PieChart /></el-icon>
-        <template #title>{{ $t('nav.reports') }}</template>
-      </el-menu-item>
+      <el-sub-menu index="reports">
+        <template #title>
+          <el-icon><PieChart /></el-icon>
+          <span>{{ $t('nav.reports') }}</span>
+        </template>
+        <el-menu-item index="/reports/sales">Báo cáo doanh số</el-menu-item>
+        <el-menu-item index="/reports/inventory">Báo cáo tồn kho</el-menu-item>
+        <el-menu-item index="/reports/production-efficiency">Hiệu suất sản xuất</el-menu-item>
+        <el-menu-item index="/reports/customers">Báo cáo khách hàng</el-menu-item>
+        <el-menu-item index="/reports/financial">Tổng kết tài chính</el-menu-item>
+      </el-sub-menu>
 
       <el-menu-item index="/settings">
         <el-icon><Setting /></el-icon>

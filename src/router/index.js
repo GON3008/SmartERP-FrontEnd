@@ -9,6 +9,24 @@ const routes = [
         meta: { requiresAuth: false, title: 'Đăng nhập' }
     },
     {
+        path: '/register',
+        name: 'Register',
+        component: () => import('@/views/auth/Register.vue'),
+        meta: { requiresAuth: false, title: 'Đăng ký' }
+    },
+    {
+        path: '/forgot-password',
+        name: 'ForgotPassword',
+        component: () => import('@/views/auth/ForgotPassword.vue'),
+        meta: { requiresAuth: false, title: 'Quên mật khẩu' }
+    },
+    {
+        path: '/reset-password',
+        name: 'ResetPassword',
+        component: () => import('@/views/auth/ResetPassword.vue'),
+        meta: { requiresAuth: false, title: 'Đặt lại mật khẩu' }
+    },
+    {
         path: '/',
         component: () => import('@/layouts/MainLayout.vue'),
         meta: { requiresAuth: true },
@@ -18,6 +36,12 @@ const routes = [
                 name: 'Dashboard',
                 component: () => import('@/views/dashboard/Index.vue'),
                 meta: { title: 'Tổng quan' }
+            },
+            {
+                path: 'profile',
+                name: 'Profile',
+                component: () => import('@/views/profile/Profile.vue'),
+                meta: { title: 'Hồ sơ cá nhân' }
             },
             {
                 path: 'customers',
@@ -61,6 +85,37 @@ const routes = [
                 component: () => import('@/views/orders/Detail.vue'),
                 meta: { title: 'Chi tiết đơn hàng' }
             },
+            // ─── Reports ──────────────────────────────────────
+            {
+                path: 'reports/sales',
+                name: 'ReportSales',
+                component: () => import('@/views/reports/Sales.vue'),
+                meta: { title: 'Báo cáo doanh số' }
+            },
+            {
+                path: 'reports/inventory',
+                name: 'ReportInventory',
+                component: () => import('@/views/reports/Inventory.vue'),
+                meta: { title: 'Báo cáo tồn kho' }
+            },
+            {
+                path: 'reports/production-efficiency',
+                name: 'ReportProduction',
+                component: () => import('@/views/reports/Production.vue'),
+                meta: { title: 'Hiệu suất sản xuất' }
+            },
+            {
+                path: 'reports/customers',
+                name: 'ReportCustomers',
+                component: () => import('@/views/reports/Customers.vue'),
+                meta: { title: 'Báo cáo khách hàng' }
+            },
+            {
+                path: 'reports/financial',
+                name: 'ReportFinancial',
+                component: () => import('@/views/reports/Financial.vue'),
+                meta: { title: 'Tổng kết tài chính' }
+            },
         ]
     },
     {
@@ -89,8 +144,8 @@ router.beforeEach((to, from, next) => {
     if (requiresAuth && !authStore.isAuthenticated) {
         // Chưa đăng nhập, chuyển đến trang login
         next({ name: 'Login', query: { redirect: to.fullPath } })
-    } else if (to.name === 'Login' && authStore.isAuthenticated) {
-        // Đã đăng nhập, chuyển đến dashboard
+    } else if (!requiresAuth && authStore.isAuthenticated) {
+        // Đã đăng nhập, không cần vào trang auth nữa → về dashboard
         next({ name: 'Dashboard' })
     } else {
         next()
