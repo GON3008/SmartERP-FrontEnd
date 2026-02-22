@@ -28,8 +28,17 @@
           min-width="200"
           show-overflow-tooltip
         />
-        <el-table-column label="Thao tác" width="180" fixed="right">
+        <el-table-column label="Thao tác" width="220" fixed="right">
           <template #default="{ row }">
+            <el-button
+              type="info"
+              size="small"
+              :icon="View"
+              link
+              @click="handleView(row)"
+            >
+              Xem
+            </el-button>
             <el-button
               type="primary"
               size="small"
@@ -130,12 +139,14 @@ import {
   Plus,
   Edit,
   Delete,
+  View,
   User,
   Message,
   Phone,
   Location,
 } from "@element-plus/icons-vue";
 import { getCustomers, deleteCustomer } from "@/api/customer";
+import { useRouter } from "vue-router";
 import CustomerFormModal from "@/components/customers/CustomerFormModal.vue";
 import { useResponsive } from "@/composables/useResponsive";
 import PageHeader from "@/components/common/PageHeader.vue";
@@ -145,6 +156,7 @@ import CardInfoRow from "@/components/common/CardInfoRow.vue";
 
 const { t } = useI18n();
 const { isMobile } = useResponsive();
+const router = useRouter();
 
 const loading = ref(false);
 const tableData = ref([]);
@@ -160,6 +172,7 @@ const pagination = reactive({
 
 // Card actions for MobileCard dropdown
 const cardActions = [
+  { command: "view", label: "Xem chi tiết", icon: View },
   { command: "edit", label: t("common.edit"), icon: Edit },
   { command: "delete", label: t("common.delete"), icon: Delete },
 ];
@@ -220,13 +233,19 @@ const handleCreate = () => {
   showModal.value = true;
 };
 
+const handleView = (row) => {
+  router.push(`/customers/${row.id}`)
+}
+
 const handleEdit = (row) => {
   selectedCustomerId.value = row.id;
   showModal.value = true;
 };
 
 const handleCardAction = (command, customer) => {
-  if (command === "edit") {
+  if (command === "view") {
+    handleView(customer);
+  } else if (command === "edit") {
     handleEdit(customer);
   } else if (command === "delete") {
     handleDelete(customer);

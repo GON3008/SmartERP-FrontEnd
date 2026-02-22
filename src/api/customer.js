@@ -52,3 +52,11 @@ export function deleteCustomer(id) {
         method: 'delete'
     })
 }
+
+export function getCustomerOrders(id, params) {
+    return request({ url: `/customers/${id}/orders`, method: 'get', params })
+}
+
+export function getCustomerStatistics(id) {
+    return request({ url: `/customers/${id}/statistics`, method: 'get' })
+}

@@ -52,3 +52,23 @@ export function deleteProduct(id) {
         method: 'delete'
     })
 }
+
+/**
+ * Lấy danh sách sản phẩm tồn kho thấp
+ */
+export function getLowStockProducts() {
+    return request({
+        url: '/products/low-stock',
+        method: 'get'
+    })
+}
+
+/**
+ * Lấy tổng tồn kho của sản phẩm
+ */
+export function getTotalStock(id) {
+    return request({
+        url: `/products/${id}/total-stock`,
+        method: 'get'
+    })
+}

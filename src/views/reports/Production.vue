@@ -191,14 +191,13 @@ onMounted(() => { fetchData(); fetchOrders() })
 </script>
 
 <style scoped lang="scss">
-@import './report-shared.scss';
+@use './report-shared.scss';
 .two-col-grid { display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;@media(max-width:768px){grid-template-columns:1fr;} }
 .gauge-center { display:flex;flex-direction:column;align-items:center;gap:16px; }
 .gauge-svg-big { width:220px;height:140px; }
 .gauge-meta { display:flex;gap:20px;flex-wrap:wrap;justify-content:center; }
 .gauge-meta-item { text-align:center;font-size:13px; span{display:block;color:var(--text-secondary);margin-bottom:2px;} strong{font-size:16px;color:var(--text-primary);} }
 .prod-status-list { display:flex;flex-direction:column;gap:16px; }
-.prod-status-item { }
 .prod-status-header { display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px; }
 .prod-status-label { display:flex;align-items:center;gap:8px;color:var(--text-secondary); }
 .prod-dot { width:10px;height:10px;border-radius:50%; }

@@ -195,7 +195,7 @@ onMounted(fetchData)
 </script>
 
 <style scoped lang="scss">
-@import './report-shared.scss';
+@use './report-shared.scss';
 .two-col-grid { display:grid;grid-template-columns:1fr 1fr;gap:18px;@media(max-width:768px){grid-template-columns:1fr;} }
 .report-kpi__sub { font-size:11px;color:var(--text-secondary);margin-top:2px; }
 
@@ -209,7 +209,6 @@ onMounted(fetchData)
 
 // Rev/Expense Bars
 .rev-exp-bars { display:flex;flex-direction:column;gap:20px; }
-.re-row { }
 .re-header { display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;color:var(--text-secondary); }
 .re-bar-wrap { height:12px;background:var(--bg-page);border-radius:6px;overflow:hidden; }
 .re-bar { height:100%;border-radius:6px;transition:width 0.8s ease; &.revenue{background:linear-gradient(90deg,#0ea5e9,#38bdf8);} &.expense{background:linear-gradient(90deg,#ef4444,#f87171);} &.profit{background:linear-gradient(90deg,#10b981,#34d399);} }

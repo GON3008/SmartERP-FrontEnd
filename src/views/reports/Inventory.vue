@@ -191,12 +191,12 @@ onMounted(() => { fetchData(); fetchLowStock() })
 </script>
 
 <style scoped lang="scss">
-@import './report-shared.scss';
+@use './report-shared.scss';
 .movement-bar-section { display: flex; flex-direction: column; gap: 20px; padding: 8px 0; }
 .mov-row { display: flex; align-items: center; gap: 16px; }
 .mov-label { width: 80px; font-size: 13px; color: var(--text-secondary); flex-shrink: 0; }
 .mov-bar-wrap { flex: 1; background: var(--bg-page); border-radius: 8px; height: 32px; overflow: hidden; }
-.mov-bar { height: 100%; border-radius: 8px; display: flex; align-items: center; padding: 0 12px; font-size: 13px; font-weight: 600; color: #fff; transition: width 0.8s ease; min-width: 60px; &.in { background: linear-gradient(90deg, #10b981, #34d399); } &.out { background: linear-gradient(90deg, #ef4444, #f87171); } &.net { } }
+.mov-bar { height: 100%; border-radius: 8px; display: flex; align-items: center; padding: 0 12px; font-size: 13px; font-weight: 600; color: #fff; transition: width 0.8s ease; min-width: 60px; &.in { background: linear-gradient(90deg, #10b981, #34d399); } &.out { background: linear-gradient(90deg, #ef4444, #f87171); } }
 .inv-stat-grid { display: flex; gap: 16px; flex-wrap: wrap; }
 .inv-stat { flex: 1; min-width: 120px; background: var(--bg-page); border-radius: 12px; padding: 16px; border: 1px solid var(--border-color); text-align: center; }
 .inv-stat__num { font-size: 22px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; }

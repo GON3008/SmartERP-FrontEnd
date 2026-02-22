@@ -5,9 +5,14 @@
         <h1 class="page-title">Quản lý sản phẩm</h1>
         <p class="page-description">Danh sách tất cả sản phẩm trong hệ thống</p>
       </div>
-      <el-button type="primary" :icon="Plus" @click="handleCreate">
-        Thêm sản phẩm
-      </el-button>
+      <div class="header-actions">
+        <el-button :icon="Warning" @click="router.push('/products/low-stock')">
+          Tồn kho thấp
+        </el-button>
+        <el-button type="primary" :icon="Plus" @click="handleCreate">
+          Thêm sản phẩm
+        </el-button>
+      </div>
     </div>
 
     <!-- Mobile Header -->
@@ -55,8 +60,17 @@
           width="155"
           align="center"
         />
-        <el-table-column label="Thao tác" width="140" fixed="right">
+        <el-table-column label="Thao tác" width="200" fixed="right">
           <template #default="{ row }">
+            <el-button
+              type="info"
+              size="small"
+              :icon="View"
+              link
+              @click="router.push(`/products/${row.id}`)"
+            >
+              Chi tiết
+            </el-button>
             <el-button
               type="primary"
               size="small"
@@ -154,6 +168,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useI18n } from "vue-i18n";
 import {
@@ -167,6 +182,7 @@ import {
   ScaleToOriginal,
   Money,
   Warning,
+  View,
 } from "@element-plus/icons-vue";
 import { getProducts, deleteProduct } from "@/api/product";
 import ProductFormModal from "@/components/products/ProductFormModal.vue";
@@ -175,6 +191,7 @@ import MobileCard from "@/components/common/MobileCard.vue";
 import CardInfoRow from "@/components/common/CardInfoRow.vue";
 
 const { t } = useI18n();
+const router = useRouter();
 const { isMobile } = useResponsive();
 
 const loading = ref(false);
@@ -194,7 +211,8 @@ const pagination = reactive({
 
 // Card actions for MobileCard dropdown
 const cardActions = [
-  { command: "edit", label: "Sửa", icon: Edit },
+  { command: "view", label: "Chi tiết", icon: View },
+  { command: "edit", label: "Sửa", icon: Edit, divided: true },
   { command: "delete", label: "Xóa", icon: Delete, divided: true },
 ];
 
@@ -255,7 +273,8 @@ const handleEdit = (row) => {
 };
 
 const handleCardAction = (command, product) => {
-  if (command === "edit") handleEdit(product);
+  if (command === "view") router.push(`/products/${product.id}`);
+  else if (command === "edit") handleEdit(product);
   else if (command === "delete") handleDelete(product);
 };
 
@@ -306,6 +325,11 @@ onMounted(() => {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 16px;
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
   }
 
   .page-title {
