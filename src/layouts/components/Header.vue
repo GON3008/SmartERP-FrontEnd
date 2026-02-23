@@ -16,11 +16,59 @@
     </div>
     
     <div class="header-right">
-      <el-badge :value="3" class="notification-badge" v-if="!isSmallMobile">
-        <el-icon class="header-icon">
-          <Bell />
-        </el-icon>
-      </el-badge>
+      <!-- Notification Bell -->
+      <el-popover
+        v-if="!isSmallMobile"
+        trigger="click"
+        placement="bottom-end"
+        :width="340"
+        popper-class="notif-popover"
+        @show="onOpenNotif"
+      >
+        <template #reference>
+          <el-badge
+            :value="notif.count.value > 0 ? notif.count.value : ''"
+            :max="99"
+            class="notification-badge"
+          >
+            <el-icon class="header-icon bell-icon" :class="{ ringing: notif.count.value > 0 }">
+              <Bell />
+            </el-icon>
+          </el-badge>
+        </template>
+
+        <!-- Dropdown panel -->
+        <div class="notif-panel">
+          <div class="notif-header">
+            <span class="notif-title">Thông báo</span>
+            <el-tag v-if="notif.count.value > 0" type="danger" size="small" round>{{ notif.count.value }} mới</el-tag>
+          </div>
+
+          <div v-loading="notif.loading.value" class="notif-list">
+            <template v-if="notif.items.value.length">
+              <div
+                v-for="item in notif.items.value"
+                :key="item.id ?? item.title"
+                class="notif-item"
+                :class="item.type"
+              >
+                <el-icon class="notif-icon">
+                  <component :is="notifIcon(item.type)" />
+                </el-icon>
+                <div class="notif-body">
+                  <p class="notif-msg">{{ item.message ?? item.title }}</p>
+                  <span class="notif-time">{{ item.product_name ?? item.created_at ?? '' }}</span>
+                </div>
+              </div>
+            </template>
+            <el-empty v-else :image-size="50" description="Không có thông báo mới" />
+          </div>
+
+          <div class="notif-footer">
+            <el-button link type="primary" @click="goToNotifications">Xem tất cả</el-button>
+          </div>
+        </div>
+      </el-popover>
 
       <!-- Language Switcher -->
       <LanguageSwitcher v-if="!isSmallMobile" />
@@ -60,42 +108,41 @@ import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import {
-  Expand,
-  Fold,
-  Menu,
-  Bell,
-  ArrowDown,
-  User,
-  Setting,
-  SwitchButton
+  Expand, Fold, Menu, Bell, ArrowDown, User,
+  Setting, SwitchButton, Warning, ShoppingCart, Box
 } from '@element-plus/icons-vue'
 import { useAuthStore } from '@/stores/auth'
 import { useResponsive } from '@/composables/useResponsive'
+import { useNotifications } from '@/composables/useNotifications'
 import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 
 const { t } = useI18n()
 
 const props = defineProps({
-  isCollapse: {
-    type: Boolean,
-    default: false
-  },
-  isMobile: {
-    type: Boolean,
-    default: false
-  }
+  isCollapse: { type: Boolean, default: false },
+  isMobile:   { type: Boolean, default: false }
 })
-
 const emit = defineEmits(['toggle-sidebar', 'toggle-mobile-drawer'])
 
-const router = useRouter()
-const route = useRoute()
+const router    = useRouter()
+const route     = useRoute()
 const authStore = useAuthStore()
 const { isSmallMobile } = useResponsive()
+const notif = useNotifications(60_000)
 
-const userName = computed(() => authStore.currentUser?.name || 'Admin')
-const userAvatar = computed(() => authStore.currentUser?.avatar || '')
+const userName    = computed(() => authStore.currentUser?.name || 'Admin')
+const userAvatar  = computed(() => authStore.currentUser?.avatar || '')
 const currentRoute = computed(() => route.meta.title || '')
+
+const notifIconMap = { warning: Warning, order: ShoppingCart, stock: Box }
+const notifIcon = (type) => notifIconMap[type] ?? Warning
+
+const goToNotifications = () => router.push('/notifications')
+
+const onOpenNotif = async () => {
+  await notif.refresh()
+  notif.clearCount()
+}
 
 const handleToggle = () => {
   if (props.isMobile) {
@@ -179,8 +226,52 @@ const handleCommand = async (command) => {
   }
 }
 
-.notification-badge {
-  cursor: pointer;
+.notification-badge { cursor: pointer; }
+
+.bell-icon {
+  font-size: 20px; cursor: pointer; transition: var(--transition-fast);
+  &:hover { color: var(--primary-color); }
+  &.ringing { animation: ring 1s ease infinite; transform-origin: 50% 0; }
+}
+@keyframes ring {
+  0%,100% { transform: rotate(0deg); }
+  20%      { transform: rotate(15deg); }
+  40%      { transform: rotate(-12deg); }
+  60%      { transform: rotate(8deg); }
+  80%      { transform: rotate(-5deg); }
+}
+
+// Notification popover (global because it's teleported)
+:global(.notif-popover) {
+  padding: 0 !important;
+  .notif-panel {
+    .notif-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; border-bottom: 1px solid var(--el-border-color-lighter);
+      .notif-title { font-weight: 700; font-size: 15px; }
+    }
+    .notif-list {
+      max-height: 340px; overflow-y: auto;
+      .notif-item {
+        display: flex; gap: 10px; padding: 10px 16px;
+        cursor: pointer; transition: background 0.15s;
+        border-bottom: 1px solid var(--el-border-color-extra-light);
+        &:hover { background: var(--el-fill-color-light); }
+        &:last-child { border-bottom: none; }
+        .notif-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; color: var(--el-color-warning); }
+        &.order .notif-icon  { color: var(--el-color-primary); }
+        &.stock .notif-icon  { color: var(--el-color-danger); }
+        .notif-body {
+          .notif-msg  { font-size: 13px; margin: 0 0 2px; line-height: 1.4; }
+          .notif-time { font-size: 11px; color: var(--el-text-color-secondary); }
+        }
+      }
+    }
+    .notif-footer {
+      padding: 8px 16px; text-align: center;
+      border-top: 1px solid var(--el-border-color-lighter);
+    }
+  }
 }
 
 .header-icon {

@@ -5,12 +5,18 @@
         <div v-if="!isCollapse" class="logo-full">
           <div class="logo-icon">
             <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-              <rect width="28" height="28" rx="8" fill="url(#logoGrad)"/>
-              <path d="M7 14l4 4 10-10" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <rect width="28" height="28" rx="8" fill="url(#logoGrad)" />
+              <path
+                d="M7 14l4 4 10-10"
+                stroke="#fff"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
               <defs>
                 <linearGradient id="logoGrad" x1="0" y1="0" x2="28" y2="28">
-                  <stop offset="0%" stop-color="#0ea5e9"/>
-                  <stop offset="100%" stop-color="#0284c7"/>
+                  <stop offset="0%" stop-color="#0ea5e9" />
+                  <stop offset="100%" stop-color="#0284c7" />
                 </linearGradient>
               </defs>
             </svg>
@@ -22,12 +28,18 @@
         <div v-else class="logo-short">
           <div class="logo-icon">
             <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-              <rect width="28" height="28" rx="8" fill="url(#logoGrad2)"/>
-              <path d="M7 14l4 4 10-10" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <rect width="28" height="28" rx="8" fill="url(#logoGrad2)" />
+              <path
+                d="M7 14l4 4 10-10"
+                stroke="#fff"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
               <defs>
                 <linearGradient id="logoGrad2" x1="0" y1="0" x2="28" y2="28">
-                  <stop offset="0%" stop-color="#0ea5e9"/>
-                  <stop offset="100%" stop-color="#0284c7"/>
+                  <stop offset="0%" stop-color="#0ea5e9" />
+                  <stop offset="100%" stop-color="#0284c7" />
                 </linearGradient>
               </defs>
             </svg>
@@ -49,59 +61,117 @@
     >
       <el-menu-item index="/">
         <el-icon><DataAnalysis /></el-icon>
-        <template #title>{{ $t('nav.dashboard') }}</template>
+        <template #title>{{ $t("nav.dashboard") }}</template>
       </el-menu-item>
 
       <el-menu-item index="/customers">
         <el-icon><User /></el-icon>
-        <template #title>{{ $t('nav.customers') }}</template>
+        <template #title>{{ $t("nav.customers") }}</template>
       </el-menu-item>
 
-      <el-menu-item index="/products">
-        <el-icon><Box /></el-icon>
-        <template #title>{{ $t('nav.products') }}</template>
-      </el-menu-item>
+      <el-sub-menu index="products">
+        <template #title>
+          <el-icon><Box /></el-icon>
+          <span>{{ $t("nav.products") }}</span>
+        </template>
+        <el-menu-item index="/products">Danh sách sản phẩm</el-menu-item>
+        <el-menu-item index="/products/low-stock">
+          <span style="display: flex; align-items: center; gap: 6px">
+            Tồn kho thấp
+            <el-icon style="color: #f56c6c"><Warning /></el-icon>
+          </span>
+        </el-menu-item>
+      </el-sub-menu>
 
       <el-menu-item index="/orders">
         <el-icon><Document /></el-icon>
-        <template #title>{{ $t('nav.orders') }}</template>
+        <template #title>{{ $t("nav.orders") }}</template>
       </el-menu-item>
 
       <el-sub-menu index="warehouse">
         <template #title>
           <el-icon><OfficeBuilding /></el-icon>
-          <span>{{ $t('nav.warehouse') }}</span>
+          <span>{{ $t("nav.warehouse") }}</span>
         </template>
-        <el-menu-item index="/warehouses">{{ $t('nav.warehouseList') }}</el-menu-item>
-        <el-menu-item index="/stock-in">{{ $t('nav.stockIn') }}</el-menu-item>
-        <el-menu-item index="/stock-out">{{ $t('nav.stockOut') }}</el-menu-item>
+        <el-menu-item index="/warehouses">{{ $t("nav.warehouseList") }}</el-menu-item>
+        <el-menu-item index="/stock/in">Nhập kho</el-menu-item>
+        <el-menu-item index="/stock/out">Xuất kho</el-menu-item>
+        <el-menu-item index="/stock/transfer">Chuyển kho</el-menu-item>
       </el-sub-menu>
 
       <el-sub-menu index="hr">
         <template #title>
           <el-icon><Avatar /></el-icon>
-          <span>{{ $t('nav.hr') }}</span>
+          <span>{{ $t("nav.hr") }}</span>
         </template>
-        <el-menu-item index="/employees">{{ $t('nav.employees') }}</el-menu-item>
-        <el-menu-item index="/attendance">{{ $t('nav.attendance') }}</el-menu-item>
-        <el-menu-item index="/salaries">{{ $t('nav.salaries') }}</el-menu-item>
+        <el-menu-item index="/employees">Nhân viên</el-menu-item>
+        <el-menu-item index="/departments">Phòng ban</el-menu-item>
+        <el-menu-item index="/positions">Chức vụ</el-menu-item>
+        <el-menu-item index="/attendances">Chấm công</el-menu-item>
+        <el-menu-item index="/salaries">Bảng lương</el-menu-item>
+      </el-sub-menu>
+
+      <el-menu-item index="/production">
+        <el-icon><Tools /></el-icon>
+        <template #title>Sản xuất</template>
+      </el-menu-item>
+
+      <el-sub-menu index="purchasing">
+        <template #title>
+          <el-icon><ShoppingCart /></el-icon>
+          <span>Mua hàng & Tài chính</span>
+        </template>
+        <el-menu-item index="/suppliers">Nhà cung cấp</el-menu-item>
+        <el-menu-item index="/purchase-orders">Phiếu mua hàng</el-menu-item>
+        <el-menu-item index="/invoices">Hóa đơn</el-menu-item>
+        <el-menu-item index="/payments">Thanh toán</el-menu-item>
+        <el-menu-item index="/accounts">Công nợ</el-menu-item>
       </el-sub-menu>
 
       <el-sub-menu index="reports">
         <template #title>
           <el-icon><PieChart /></el-icon>
-          <span>{{ $t('nav.reports') }}</span>
+          <span>{{ $t("nav.reports") }}</span>
         </template>
         <el-menu-item index="/reports/sales">Báo cáo doanh số</el-menu-item>
         <el-menu-item index="/reports/inventory">Báo cáo tồn kho</el-menu-item>
-        <el-menu-item index="/reports/production-efficiency">Hiệu suất sản xuất</el-menu-item>
+        <el-menu-item index="/reports/production-efficiency"
+          >Hiệu suất sản xuất</el-menu-item
+        >
         <el-menu-item index="/reports/customers">Báo cáo khách hàng</el-menu-item>
         <el-menu-item index="/reports/financial">Tổng kết tài chính</el-menu-item>
       </el-sub-menu>
 
+      <el-sub-menu index="admin">
+        <template #title>
+          <el-icon><UserFilled /></el-icon>
+          <span>Quản trị hệ thống</span>
+        </template>
+        <el-menu-item index="/users">Người dùng</el-menu-item>
+        <el-menu-item index="/roles">Vai trò</el-menu-item>
+        <el-menu-item index="/permissions">Quyền hạn</el-menu-item>
+        <el-menu-item index="/notifications">Thông báo</el-menu-item>
+        <el-menu-item index="/activity-logs">Nhật ký hoạt động</el-menu-item>
+      </el-sub-menu>
+
+      <el-menu-item index="/barcode">
+        <el-icon><Crop /></el-icon>
+        <template #title>⬛ Barcode / QR Scanner</template>
+      </el-menu-item>
+
+      <el-menu-item index="/ocr">
+        <el-icon><Document /></el-icon>
+        <template #title>🧧 OCR – Đọc hóa đơn</template>
+      </el-menu-item>
+
+      <el-menu-item index="/ai/purchase-suggestions">
+        <el-icon><MagicStick /></el-icon>
+        <template #title>✦ Đề xuất nhập hàng</template>
+      </el-menu-item>
+
       <el-menu-item index="/settings">
         <el-icon><Setting /></el-icon>
-        <template #title>{{ $t('nav.settings') }}</template>
+        <template #title>{{ $t("nav.settings") }}</template>
       </el-menu-item>
     </el-menu>
 
@@ -114,41 +184,52 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 import {
-  DataAnalysis, User, Box, Document,
-  OfficeBuilding, Avatar, PieChart, Setting
-} from '@element-plus/icons-vue'
+  DataAnalysis,
+  User,
+  Box,
+  Document,
+  OfficeBuilding,
+  Avatar,
+  PieChart,
+  Setting,
+  Warning,
+  UserFilled,
+  Tools,
+  MagicStick,
+  ShoppingCart,
+} from "@element-plus/icons-vue";
 
 defineProps({
-  isCollapse: { type: Boolean, default: false }
-})
+  isCollapse: { type: Boolean, default: false },
+});
 
-const emit = defineEmits(['menu-click'])
+const emit = defineEmits(["menu-click"]);
 
-const route = useRoute()
-const activeMenu = computed(() => route.path)
+const route = useRoute();
+const activeMenu = computed(() => route.path);
 
 const handleMenuClick = () => {
-  emit('menu-click')
-}
+  emit("menu-click");
+};
 </script>
 
 <style scoped lang="scss">
 // ─── CSS Variables ──────────────────────────────────────────
 :root {
-  --sidebar-bg-top:    #162d47;
-  --sidebar-bg-mid:    #1a3a5c;
-  --sidebar-bg-bot:    #112438;
-  --accent-cyan:       #0ea5e9;
-  --accent-cyan-soft:  #38bdf8;
-  --accent-cyan-glow:  rgba(14, 165, 233, 0.3);
-  --text-muted:        rgba(210, 235, 255, 0.92);
-  --text-bright:       #ffffff;
-  --item-hover-bg:     rgba(14, 165, 233, 0.15);
-  --item-active-bg:    rgba(14, 165, 233, 0.28);
-  --border-subtle:     rgba(56, 189, 248, 0.3);
+  --sidebar-bg-top: #162d47;
+  --sidebar-bg-mid: #1a3a5c;
+  --sidebar-bg-bot: #112438;
+  --accent-cyan: #0ea5e9;
+  --accent-cyan-soft: #38bdf8;
+  --accent-cyan-glow: rgba(14, 165, 233, 0.3);
+  --text-muted: rgba(210, 235, 255, 0.92);
+  --text-bright: #ffffff;
+  --item-hover-bg: rgba(14, 165, 233, 0.15);
+  --item-active-bg: rgba(14, 165, 233, 0.28);
+  --border-subtle: rgba(56, 189, 248, 0.3);
 }
 
 // ─── Sidebar Container ───────────────────────────────────────
@@ -160,17 +241,11 @@ const handleMenuClick = () => {
   flex-direction: column;
 
   // Lighter navy blue — clean enterprise
-  background:
-    linear-gradient(180deg,
-      #162d47 0%,
-      #1a3a5c 40%,
-      #163248 75%,
-      #112438 100%
-    );
+  background: linear-gradient(180deg, #162d47 0%, #1a3a5c 40%, #163248 75%, #112438 100%);
 
   // Subtle top-left cyan mesh highlight
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: -60px;
     left: -60px;
@@ -181,15 +256,17 @@ const handleMenuClick = () => {
   }
 
   // Right border accent line
-  box-shadow:
-    4px 0 20px rgba(0, 0, 0, 0.4),
-    inset -1px 0 0 rgba(14, 165, 233, 0.15);
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.4), inset -1px 0 0 rgba(14, 165, 233, 0.15);
 
   position: relative;
 
   // Scrollbar
-  &::-webkit-scrollbar { width: 3px; }
-  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
   &::-webkit-scrollbar-thumb {
     background: rgba(14, 165, 233, 0.3);
     border-radius: 2px;
@@ -206,13 +283,14 @@ const handleMenuClick = () => {
   position: relative;
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     left: 12px;
     right: 12px;
     height: 1px;
-    background: linear-gradient(90deg,
+    background: linear-gradient(
+      90deg,
       transparent,
       rgba(14, 165, 233, 0.5),
       rgba(56, 189, 248, 0.5),
@@ -265,6 +343,10 @@ const handleMenuClick = () => {
 
 :deep(.el-menu) {
   background: transparent !important;
+  // Override Element Plus menu text color so sub-menu titles are always light
+  --el-menu-text-color: rgba(210, 235, 255, 0.92);
+  --el-menu-hover-text-color: #ffffff;
+  --el-menu-active-color: #38bdf8;
 }
 
 // Menu items
@@ -289,7 +371,9 @@ const handleMenuClick = () => {
     background: var(--item-hover-bg) !important;
     color: #ffffff !important;
 
-    * { color: #ffffff !important; }
+    * {
+      color: #ffffff !important;
+    }
 
     .el-icon {
       color: var(--accent-cyan-soft) !important;
@@ -299,8 +383,7 @@ const handleMenuClick = () => {
   &.is-active {
     background: var(--item-active-bg) !important;
     color: #ffffff !important;
-    box-shadow:
-      0 2px 12px rgba(14, 165, 233, 0.25),
+    box-shadow: 0 2px 12px rgba(14, 165, 233, 0.25),
       inset 0 0 0 1px rgba(56, 189, 248, 0.25);
 
     .el-icon {
@@ -310,7 +393,7 @@ const handleMenuClick = () => {
 
     // Left indicator
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       left: 0;
       top: 50%;
@@ -335,6 +418,11 @@ const handleMenuClick = () => {
   height: 44px;
   line-height: 44px;
 
+  // Force text inside (span generated by Element Plus) to be light
+  span {
+    color: rgba(210, 235, 255, 0.92) !important;
+  }
+
   .el-icon {
     font-size: 17px;
     color: rgba(147, 210, 250, 1);
@@ -349,7 +437,10 @@ const handleMenuClick = () => {
     background: var(--item-hover-bg) !important;
     color: #ffffff !important;
 
-    * { color: #ffffff !important; }
+    span,
+    * {
+      color: #ffffff !important;
+    }
 
     .el-icon {
       color: var(--accent-cyan-soft) !important;
@@ -359,8 +450,13 @@ const handleMenuClick = () => {
 
 // Sub-menu open state highlight
 :deep(.el-sub-menu.is-opened > .el-sub-menu__title) {
-  color: var(--text-bright) !important;
-  .el-icon { color: var(--accent-cyan-soft) !important; }
+  // color: var(--text-bright) !important;
+  span {
+    color: var(--text-bright) !important;
+  }
+  .el-icon {
+    color: var(--accent-cyan-soft) !important;
+  }
 }
 
 // Sub-menu children
@@ -380,7 +476,7 @@ const handleMenuClick = () => {
 
     // Subtle left line connector
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       left: 28px;
       top: 50%;
@@ -431,18 +527,33 @@ const handleMenuClick = () => {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(34, 211, 238, 0.8); }
-  50%       { opacity: 0.6; box-shadow: 0 0 12px rgba(34, 211, 238, 0.4); }
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 6px rgba(34, 211, 238, 0.8);
+  }
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 12px rgba(34, 211, 238, 0.4);
+  }
 }
 
 // ─── Global Element Plus hover override ──────────────────────
 :deep(.el-menu-item:hover),
 :deep(.el-sub-menu__title:hover) {
   color: #ffffff !important;
-  span { color: #ffffff !important; }
+  span {
+    color: #ffffff !important;
+  }
 }
 
 // ─── Transition ──────────────────────────────────────────────
-.fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease; }
-.fade-enter-from, .fade-leave-to       { opacity: 0; }
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>
