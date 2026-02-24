@@ -136,5 +136,19 @@ onMounted(() => {
 <style scoped lang="scss">
 .customer-form-container {
   max-width: 1000px;
+
+  @media (max-width: 640px) {
+    // Switch form label to top position on mobile via CSS override
+    :deep(.el-form-item__label) {
+      float: none;
+      display: block;
+      text-align: left;
+      padding: 0 0 4px;
+    }
+    :deep(.el-form-item__content) { margin-left: 0 !important; }
+    :deep(.el-form-item) { margin-bottom: 16px; }
+
+    .page-title { font-size: 18px; }
+  }
 }
 </style>

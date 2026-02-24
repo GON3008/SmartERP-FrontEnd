@@ -94,7 +94,7 @@
           </el-table>
           <el-empty v-if="!loadingOrders && !orders.length" description="Chưa có đơn hàng nào" :image-size="60" />
           <div class="pagination-bar" v-if="orderTotal > orderPerPage">
-            <el-pagination v-model:current-page="orderPage" :page-size="orderPerPage" :total="orderTotal" layout="prev, pager, next" small @current-change="fetchOrders" />
+            <el-pagination v-model:current-page="orderPage" :page-size="orderPerPage" :total="orderTotal" layout="prev, pager, next" size="small" @current-change="fetchOrders" />
           </div>
         </el-card>
       </div>

@@ -98,6 +98,7 @@ export const useAuthStore = defineStore('auth', () => {
         return userRoles.value.includes(role)
     }
 
+
     return {
         // State
         token,

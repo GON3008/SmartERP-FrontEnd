@@ -203,6 +203,6 @@ onMounted(() => { fetchSales(); fetchTop() })
 </script>
 
 <style scoped lang="scss">
-@import './report-shared.scss';
+@use './report-shared.scss';
 .report-kpi__sub { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
 </style>

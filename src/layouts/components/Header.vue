@@ -7,14 +7,14 @@
         <Expand v-else-if="isCollapse" />
         <Fold v-else />
       </el-icon>
-      
+
       <!-- Hide breadcrumbs on small mobile -->
       <el-breadcrumb v-if="!isSmallMobile" separator="/">
-        <el-breadcrumb-item :to="{ path: '/' }">{{ $t('nav.home') }}</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/' }">{{ $t("nav.home") }}</el-breadcrumb-item>
         <el-breadcrumb-item v-if="currentRoute">{{ currentRoute }}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
-    
+
     <div class="header-right">
       <!-- Notification Bell -->
       <el-popover
@@ -31,7 +31,10 @@
             :max="99"
             class="notification-badge"
           >
-            <el-icon class="header-icon bell-icon" :class="{ ringing: notif.count.value > 0 }">
+            <el-icon
+              class="header-icon bell-icon"
+              :class="{ ringing: notif.count.value > 0 }"
+            >
               <Bell />
             </el-icon>
           </el-badge>
@@ -41,7 +44,18 @@
         <div class="notif-panel">
           <div class="notif-header">
             <span class="notif-title">Thông báo</span>
-            <el-tag v-if="notif.count.value > 0" type="danger" size="small" round>{{ notif.count.value }} mới</el-tag>
+            <div class="notif-header__actions">
+              <el-tag v-if="notif.count.value > 0" type="danger" size="small" round
+                >{{ notif.count.value }} mới</el-tag
+              >
+              <el-button
+                v-if="notif.count.value > 0"
+                link
+                size="small"
+                @click.stop="notif.markAllRead()"
+                >Đã đọc tất cả</el-button
+              >
+            </div>
           </div>
 
           <div v-loading="notif.loading.value" class="notif-list">
@@ -50,29 +64,35 @@
                 v-for="item in notif.items.value"
                 :key="item.id ?? item.title"
                 class="notif-item"
-                :class="item.type"
+                :class="[item.type, { 'notif-item--unread': isItemUnread(item) }]"
+                @click="handleNotifClick(item)"
               >
                 <el-icon class="notif-icon">
                   <component :is="notifIcon(item.type)" />
                 </el-icon>
                 <div class="notif-body">
                   <p class="notif-msg">{{ item.message ?? item.title }}</p>
-                  <span class="notif-time">{{ item.product_name ?? item.created_at ?? '' }}</span>
+                  <span class="notif-time">{{
+                    fmtNotifTime(item.created_at ?? item.time)
+                  }}</span>
                 </div>
+                <span v-if="isItemUnread(item)" class="notif-dot" />
               </div>
             </template>
             <el-empty v-else :image-size="50" description="Không có thông báo mới" />
           </div>
 
           <div class="notif-footer">
-            <el-button link type="primary" @click="goToNotifications">Xem tất cả</el-button>
+            <el-button link type="primary" @click="goToNotifications"
+              >Xem tất cả</el-button
+            >
           </div>
         </div>
       </el-popover>
 
       <!-- Language Switcher -->
       <LanguageSwitcher v-if="!isSmallMobile" />
-      
+
       <el-dropdown @command="handleCommand">
         <div class="user-info">
           <el-avatar :size="32" :src="userAvatar">
@@ -85,15 +105,15 @@
           <el-dropdown-menu>
             <el-dropdown-item command="profile">
               <el-icon><User /></el-icon>
-              {{ $t('header.profile') }}
+              {{ $t("header.profile") }}
             </el-dropdown-item>
             <el-dropdown-item command="settings">
               <el-icon><Setting /></el-icon>
-              {{ $t('nav.settings') }}
+              {{ $t("nav.settings") }}
             </el-dropdown-item>
             <el-dropdown-item divided command="logout">
               <el-icon><SwitchButton /></el-icon>
-              {{ $t('header.logout') }}
+              {{ $t("header.logout") }}
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
@@ -103,84 +123,122 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { useI18n } from 'vue-i18n'
+import { computed } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { useI18n } from "vue-i18n";
 import {
-  Expand, Fold, Menu, Bell, ArrowDown, User,
-  Setting, SwitchButton, Warning, ShoppingCart, Box
-} from '@element-plus/icons-vue'
-import { useAuthStore } from '@/stores/auth'
-import { useResponsive } from '@/composables/useResponsive'
-import { useNotifications } from '@/composables/useNotifications'
-import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
+  Expand,
+  Fold,
+  Menu,
+  Bell,
+  ArrowDown,
+  User,
+  Setting,
+  SwitchButton,
+  Warning,
+  ShoppingCart,
+  Box,
+} from "@element-plus/icons-vue";
+import { useAuthStore } from "@/stores/auth";
+import { useResponsive } from "@/composables/useResponsive";
+import { useNotifications, isItemUnread } from "@/composables/useNotifications";
+import LanguageSwitcher from "@/components/LanguageSwitcher.vue";
 
-const { t } = useI18n()
+const { t } = useI18n();
 
 const props = defineProps({
   isCollapse: { type: Boolean, default: false },
-  isMobile:   { type: Boolean, default: false }
-})
-const emit = defineEmits(['toggle-sidebar', 'toggle-mobile-drawer'])
+  isMobile: { type: Boolean, default: false },
+});
+const emit = defineEmits(["toggle-sidebar", "toggle-mobile-drawer"]);
 
-const router    = useRouter()
-const route     = useRoute()
-const authStore = useAuthStore()
-const { isSmallMobile } = useResponsive()
-const notif = useNotifications(60_000)
+const router = useRouter();
+const route = useRoute();
+const authStore = useAuthStore();
+const { isSmallMobile } = useResponsive();
+const notif = useNotifications(60_000);
 
-const userName    = computed(() => authStore.currentUser?.name || 'Admin')
-const userAvatar  = computed(() => authStore.currentUser?.avatar || '')
-const currentRoute = computed(() => route.meta.title || '')
+const userName = computed(() => authStore.currentUser?.name || "Admin");
+const userAvatar = computed(() => authStore.currentUser?.avatar || "");
+const currentRoute = computed(() => route.meta.title || "");
 
-const notifIconMap = { warning: Warning, order: ShoppingCart, stock: Box }
-const notifIcon = (type) => notifIconMap[type] ?? Warning
+const notifIconMap = { warning: Warning, order: ShoppingCart, stock: Box };
+const notifIcon = (type) => notifIconMap[type] ?? Warning;
 
-const goToNotifications = () => router.push('/notifications')
+const goToNotifications = () => {
+  notif.markAllRead();
+  router.push("/notifications");
+};
+
+/** Điều hướng thông minh theo loại thông báo từ NotificationService */
+const notifRoute = (item) => {
+  switch (item.type) {
+    case "low_stock":
+      return item.product_id ? `/products/${item.product_id}` : "/products";
+    case "pending_order":
+      return item.order_id ? `/orders/${item.order_id}` : "/orders";
+    case "production_delay":
+      return item.order_id
+        ? `/production-orders/${item.order_id}`
+        : "/production-orders";
+    default:
+      return item.link ?? item.url ?? "/notifications";
+  }
+};
+
+/** Click 1 thông báo: đánh dấu đã đọc + điều hướng đến trang chi tiết */
+const handleNotifClick = (item) => {
+  notif.markRead(item);
+  router.push(notifRoute(item));
+};
+
+const fmtNotifTime = (d) => {
+  if (!d) return "";
+  const diff = Date.now() - new Date(d).getTime();
+  if (diff < 60000) return "Vừa xong";
+  if (diff < 3600000) return `${Math.floor(diff / 60000)} phút trước`;
+  if (diff < 86400000) return `${Math.floor(diff / 3600000)} giờ trước`;
+  return new Date(d).toLocaleDateString("vi-VN");
+};
 
 const onOpenNotif = async () => {
-  await notif.refresh()
-  notif.clearCount()
-}
+  await notif.refresh();
+};
 
 const handleToggle = () => {
   if (props.isMobile) {
-    emit('toggle-mobile-drawer')
+    emit("toggle-mobile-drawer");
   } else {
-    emit('toggle-sidebar')
+    emit("toggle-sidebar");
   }
-}
+};
 
 const handleCommand = async (command) => {
   switch (command) {
-    case 'profile':
-      router.push('/profile')
-      break
-    case 'settings':
-      router.push('/settings')
-      break
-    case 'logout':
+    case "profile":
+      router.push("/profile");
+      break;
+    case "settings":
+      router.push("/settings");
+      break;
+    case "logout":
       try {
-        await ElMessageBox.confirm(
-          t('header.logoutConfirm'),
-          t('common.confirm'),
-          {
-            confirmButtonText: t('header.logout'),
-            cancelButtonText: t('common.cancel'),
-            type: 'warning'
-          }
-        )
-        
-        await authStore.logout()
-        ElMessage.success(t('header.logoutSuccess'))
-        router.push('/login')
+        await ElMessageBox.confirm(t("header.logoutConfirm"), t("common.confirm"), {
+          confirmButtonText: t("header.logout"),
+          cancelButtonText: t("common.cancel"),
+          type: "warning",
+        });
+
+        await authStore.logout();
+        ElMessage.success(t("header.logoutSuccess"));
+        router.push("/login");
       } catch (error) {
         // User cancelled
       }
-      break
+      break;
   }
-}
+};
 </script>
 
 <style scoped lang="scss">
@@ -196,7 +254,7 @@ const handleCommand = async (command) => {
   display: flex;
   align-items: center;
   gap: 16px;
-  
+
   @media (max-width: 640px) {
     gap: 12px;
   }
@@ -206,11 +264,11 @@ const handleCommand = async (command) => {
   font-size: 20px;
   cursor: pointer;
   transition: var(--transition-fast);
-  
+
   &:hover {
     color: var(--primary-color);
   }
-  
+
   &:active {
     transform: scale(0.95);
   }
@@ -220,55 +278,142 @@ const handleCommand = async (command) => {
   display: flex;
   align-items: center;
   gap: 24px;
-  
+
   @media (max-width: 767px) {
     gap: 12px;
   }
 }
 
-.notification-badge { cursor: pointer; }
+.notification-badge {
+  cursor: pointer;
+}
 
 .bell-icon {
-  font-size: 20px; cursor: pointer; transition: var(--transition-fast);
-  &:hover { color: var(--primary-color); }
-  &.ringing { animation: ring 1s ease infinite; transform-origin: 50% 0; }
+  font-size: 20px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  &:hover {
+    color: var(--primary-color);
+  }
+  &.ringing {
+    animation: ring 1s ease infinite;
+    transform-origin: 50% 0;
+  }
 }
 @keyframes ring {
-  0%,100% { transform: rotate(0deg); }
-  20%      { transform: rotate(15deg); }
-  40%      { transform: rotate(-12deg); }
-  60%      { transform: rotate(8deg); }
-  80%      { transform: rotate(-5deg); }
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(15deg);
+  }
+  40% {
+    transform: rotate(-12deg);
+  }
+  60% {
+    transform: rotate(8deg);
+  }
+  80% {
+    transform: rotate(-5deg);
+  }
 }
 
 // Notification popover (global because it's teleported)
 :global(.notif-popover) {
   padding: 0 !important;
+  border-radius: 12px !important;
   .notif-panel {
+    min-width: 320px;
+    border-radius: 12px;
+    overflow: hidden;
     .notif-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 16px; border-bottom: 1px solid var(--el-border-color-lighter);
-      .notif-title { font-weight: 700; font-size: 15px; }
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--el-border-color-lighter);
+      .notif-title {
+        font-weight: 700;
+        font-size: 15px;
+        flex: 1;
+      }
+      .notif-header__actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+        .el-button.is-link {
+          font-size: 12px;
+          padding: 0;
+          height: auto;
+        }
+      }
     }
     .notif-list {
-      max-height: 340px; overflow-y: auto;
+      min-height: 80px;
+      max-height: 340px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
       .notif-item {
-        display: flex; gap: 10px; padding: 10px 16px;
-        cursor: pointer; transition: background 0.15s;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 16px;
+        cursor: pointer;
+        transition: background 0.15s;
         border-bottom: 1px solid var(--el-border-color-extra-light);
-        &:hover { background: var(--el-fill-color-light); }
-        &:last-child { border-bottom: none; }
-        .notif-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; color: var(--el-color-warning); }
-        &.order .notif-icon  { color: var(--el-color-primary); }
-        &.stock .notif-icon  { color: var(--el-color-danger); }
+        &:last-child {
+          border-bottom: none;
+        }
+        &:hover {
+          background: var(--el-fill-color-light);
+        }
+        &.notif-item--unread {
+          background: var(--el-color-primary-light-9);
+        }
+        &.notif-item--unread:hover {
+          background: var(--el-color-primary-light-8);
+        }
+        .notif-icon {
+          font-size: 18px;
+          flex-shrink: 0;
+          margin-top: 2px;
+          color: var(--el-color-warning);
+        }
+        &.order .notif-icon {
+          color: var(--el-color-primary);
+        }
+        &.stock .notif-icon {
+          color: var(--el-color-danger);
+        }
         .notif-body {
-          .notif-msg  { font-size: 13px; margin: 0 0 2px; line-height: 1.4; }
-          .notif-time { font-size: 11px; color: var(--el-text-color-secondary); }
+          flex: 1;
+          min-width: 0;
+          .notif-msg {
+            font-size: 13px;
+            margin: 0 0 2px;
+            line-height: 1.4;
+            word-break: break-word;
+          }
+          .notif-time {
+            font-size: 11px;
+            color: var(--el-text-color-secondary);
+          }
+        }
+        .notif-dot {
+          width: 8px;
+          // height: 8px;
+          border-radius: 50%;
+          background: var(--el-color-danger);
+          flex-shrink: 0;
+          margin-top: 6px;
         }
       }
     }
     .notif-footer {
-      padding: 8px 16px; text-align: center;
+      padding: 8px 16px;
+      text-align: center;
       border-top: 1px solid var(--el-border-color-lighter);
     }
   }
@@ -278,7 +423,7 @@ const handleCommand = async (command) => {
   font-size: 20px;
   cursor: pointer;
   transition: var(--transition-fast);
-  
+
   &:hover {
     color: var(--primary-color);
   }
@@ -292,11 +437,11 @@ const handleCommand = async (command) => {
   padding: 4px 8px;
   border-radius: var(--radius-base);
   transition: var(--transition-fast);
-  
+
   &:hover {
     background-color: var(--bg-page);
   }
-  
+
   &:active {
     transform: scale(0.98);
   }
