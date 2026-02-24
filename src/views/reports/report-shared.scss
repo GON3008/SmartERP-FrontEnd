@@ -19,8 +19,18 @@
     align-items: center;
     gap: 16px;
 
-    h2 { font-size: 20px; font-weight: 800; color: var(--text-primary); margin: 0 0 4px; }
-    p  { font-size: 13.5px; color: var(--text-secondary); margin: 0; }
+    h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin: 0 0 4px;
+    }
+
+    p {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      margin: 0;
+    }
   }
 
   &__icon {
@@ -45,8 +55,13 @@
   gap: 16px;
   margin-bottom: 24px;
 
-  @media (max-width: 900px)  { grid-template-columns: repeat(2, 1fr); }
-  @media (max-width: 480px)  { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .report-kpi {
@@ -57,14 +72,35 @@
   border-top-width: 3px;
   transition: box-shadow 0.2s, transform 0.2s;
 
-  &:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.08); transform: translateY(-2px); }
+  &:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
 
-  &__value { font-size: 22px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; }
-  &__label { font-size: 12.5px; color: var(--text-secondary); margin-bottom: 8px; }
+  &__value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+
+  &__label {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+
   &__trend {
-    font-size: 12px; font-weight: 600;
-    &.up   { color: #10b981; }
-    &.down { color: #f87171; }
+    font-size: 12px;
+    font-weight: 600;
+
+    &.up {
+      color: #10b981;
+    }
+
+    &.down {
+      color: #f87171;
+    }
   }
 }
 
@@ -77,7 +113,9 @@
   margin-bottom: 18px;
   transition: box-shadow 0.2s;
 
-  &:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.07); }
+  &:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+  }
 }
 
 .report-card-header {
@@ -88,19 +126,117 @@
   flex-wrap: wrap;
   gap: 12px;
 
-  h3 { font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 0; }
+  h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+  }
 }
 
 // ─── Table ────────────────────────────────────────────────────
 .report-table {
-  :deep(thead th) { background: var(--bg-page) !important; font-weight: 600; font-size: 12.5px; }
-  :deep(td) { font-size: 13px; }
+  :deep(thead th) {
+    background: var(--bg-page) !important;
+    font-weight: 600;
+    font-size: 12.5px;
+  }
+
+  :deep(td) {
+    font-size: 13px;
+  }
 }
 
 // ─── Shared helpers ───────────────────────────────────────────
-.text-blue  { color: #0ea5e9; }
-.text-green { color: #10b981; }
+.text-blue {
+  color: #0ea5e9;
+}
+
+.text-green {
+  color: #10b981;
+}
 
 // ─── Line Chart ───────────────────────────────────────────────
-.line-chart-wrap { overflow-x: auto; }
-.line-svg { width: 100%; min-width: 500px; height: 240px; display: block; }
+.line-chart-wrap {
+  overflow-x: auto;
+}
+
+.line-svg {
+  width: 100%;
+  min-width: 500px;
+  height: 240px;
+  display: block;
+}
+
+// ─── Mobile / Tablet responsive ───────────────────────────────
+@media (max-width: 768px) {
+  .report-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 18px;
+
+    &__actions {
+      width: 100%;
+
+      .el-select,
+      .el-date-editor {
+        width: 100% !important;
+      }
+    }
+  }
+
+  .report-card {
+    padding: 14px 12px;
+  }
+
+  .report-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .report-kpi {
+    padding: 14px 16px;
+
+    &__value {
+      font-size: 18px;
+    }
+  }
+
+  .report-table {
+    overflow-x: auto;
+
+    :deep(.el-table__body-wrapper) {
+      overflow-x: auto;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .report-header {
+    &__left {
+      gap: 10px;
+
+      h2 {
+        font-size: 16px;
+      }
+    }
+
+    &__icon {
+      font-size: 20px;
+      padding: 10px;
+    }
+  }
+
+  .report-kpi {
+    &__value {
+      font-size: 15px;
+    }
+
+    &__label {
+      font-size: 11px;
+    }
+  }
+}

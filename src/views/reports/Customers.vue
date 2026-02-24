@@ -231,7 +231,7 @@ onMounted(fetchData);
 </script>
 
 <style scoped lang="scss">
-@import "./report-shared.scss";
+@use "./report-shared.scss";
 .top-cust-chart {
   display: flex;
   flex-direction: column;

@@ -175,6 +175,11 @@ request.interceptors.response.use(
                     ElMessage.error('Lỗi máy chủ. Vui lòng thử lại sau.')
                     break
 
+                case 503:
+                    // Maintenance mode — redirect tới trang bảo trì
+                    router.replace('/maintenance')
+                    return Promise.reject(error)
+
                 default:
                     ElMessage.error(data.message || 'Có lỗi xảy ra')
             }
