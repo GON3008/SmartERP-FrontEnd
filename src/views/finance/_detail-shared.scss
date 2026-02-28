@@ -1,0 +1,205 @@
+// ────────────────────────────────────────────────────────────
+// Shared layout tokens for Finance Detail views
+// Import: @import '@/views/finance/_detail-shared.scss';
+// ────────────────────────────────────────────────────────────
+
+// ── Container ─────────────────────────────────────────────────
+.det-container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    @media (max-width: 767px) {
+        padding: 12px;
+        gap: 12px;
+    }
+}
+
+// ── Header ─────────────────────────────────────────────────────
+.det-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    &__left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    &__info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    &__actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+
+        @media (max-width: 767px) {
+            width: 100%;
+
+            .el-button {
+                flex: 1;
+            }
+        }
+    }
+}
+
+.det-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--el-text-color-primary);
+    font-family: monospace;
+}
+
+// ── Stat cards ─────────────────────────────────────────────────
+.det-stats {
+    margin-bottom: 4px;
+
+    .el-col {
+        margin-bottom: 14px;
+    }
+}
+
+.scard {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    border-radius: 14px;
+    color: #fff;
+    height: 100%;
+
+    &__icon {
+        font-size: 30px;
+        opacity: 0.9;
+        flex-shrink: 0;
+    }
+
+    &__val {
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__lbl {
+        font-size: 12px;
+        opacity: 0.85;
+        margin-top: 3px;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 767px) {
+        padding: 12px 14px;
+        gap: 10px;
+
+        &__icon {
+            font-size: 22px;
+        }
+
+        &__val {
+            font-size: 15px;
+        }
+    }
+}
+
+// ── Detail cards ───────────────────────────────────────────────
+.det-card {
+    border-radius: 12px;
+    margin-bottom: 16px;
+
+    &__title {
+        font-weight: 700;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    &__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+// ── Payment summary bar ─────────────────────────────────────────
+.pay-summary {
+    margin-top: 12px;
+    background: var(--el-fill-color-light);
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    &__row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        color: var(--el-text-color-regular);
+
+        &--total {
+            border-top: 1px solid var(--el-border-color-light);
+            padding-top: 6px;
+            margin-top: 2px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--el-text-color-primary);
+        }
+    }
+}
+
+// ── Utility helpers ────────────────────────────────────────────
+.mono-code {
+    font-family: monospace;
+    font-weight: 700;
+    color: var(--el-color-primary);
+}
+
+.text-primary {
+    color: var(--el-color-primary);
+}
+
+.text-success {
+    color: var(--el-color-success);
+}
+
+.text-danger {
+    color: var(--el-color-danger);
+    font-weight: 600;
+}
+
+.text-warning {
+    color: var(--el-color-warning-dark-2);
+}
+
+.fw-700 {
+    font-weight: 700;
+}
+
+.link-text {
+    color: var(--el-color-primary);
+    cursor: pointer;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+:deep(.el-descriptions__label) {
+    font-weight: 600;
+    white-space: nowrap;
+    width: 130px;
+}

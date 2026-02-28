@@ -1,0 +1,293 @@
+// ────────────────────────────────────────────────────────────
+// Shared layout tokens for all Finance List views
+// Import: @import '@/views/finance/_list-shared.scss';
+// ────────────────────────────────────────────────────────────
+
+// ── Page wrapper ─────────────────────────────────────────────
+.list-page {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    @media (max-width: 767px) {
+        padding: 12px;
+        gap: 12px;
+    }
+}
+
+// ── Page header ──────────────────────────────────────────────
+.lp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    &__title {
+        font-size: 22px;
+        font-weight: 700;
+        margin: 0;
+        line-height: 1.2;
+        color: var(--el-text-color-primary);
+    }
+
+    &__desc {
+        margin: 2px 0 0;
+        font-size: 13px;
+        color: var(--el-text-color-secondary);
+    }
+}
+
+// ── Stat Cards ────────────────────────────────────────────────
+.lp-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+
+    @media (max-width: 1100px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 480px) {
+        gap: 8px;
+    }
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    border-radius: 14px;
+    color: #fff;
+
+    .sc-icon {
+        font-size: 30px;
+        opacity: 0.9;
+        flex-shrink: 0;
+    }
+
+    .sc-body {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    .sc-val {
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .sc-lbl {
+        font-size: 12px;
+        opacity: 0.85;
+        margin-top: 2px;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 767px) {
+        padding: 12px 14px;
+        gap: 10px;
+
+        .sc-icon {
+            font-size: 24px;
+        }
+
+        .sc-val {
+            font-size: 16px;
+        }
+    }
+}
+
+// ── Filter bar ────────────────────────────────────────────────
+// Layout: [Label] [Input] [Label] [Select] [Btn] [Btn]
+// Desktop: all on 1 row, compact
+// Mobile: 2-column grid (label + control pairs), buttons side by side
+.lp-filter {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: var(--el-fill-color-blank, #fff);
+    border: 1px solid var(--el-border-color-light);
+    border-radius: 10px;
+
+    // Text labels (e.g. "Tìm kiếm", "Trạng thái")
+    .lp-lbl {
+        font-size: 13px;
+        color: var(--el-text-color-regular);
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    // Search input: grows to fill free space
+    .lp-filter__search {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    // Selects & buttons: fixed size
+    .el-select {
+        flex: 0 0 auto;
+    }
+
+    .el-button {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+
+    // Mobile: stack to 2-col grid, hide labels, full-width controls
+    @media (max-width: 767px) {
+        flex-wrap: wrap;
+        padding: 10px 12px;
+        gap: 8px;
+
+        // Hide descriptor labels on mobile (saves space)
+        .lp-lbl {
+            display: none;
+        }
+
+        .lp-filter__search {
+            flex: 1 1 100%;
+        }
+
+        .el-select {
+            flex: 1 1 calc(50% - 4px);
+        }
+
+        // Buttons side by side
+        .el-button {
+            flex: 1 1 calc(50% - 4px);
+        }
+    }
+}
+
+// ── Table Card ────────────────────────────────────────────────
+.lp-table-card {
+    border-radius: 12px;
+    border: 1px solid var(--el-border-color-light);
+
+    :deep(.el-card__body) {
+        padding: 0;
+    }
+
+    :deep(.el-table) {
+        border-radius: 10px;
+        overflow: hidden;
+
+        th.el-table__cell {
+            background: var(--el-fill-color-light);
+            font-weight: 600;
+            color: var(--el-text-color-primary);
+            font-size: 13px;
+        }
+    }
+}
+
+.lp-pagination {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px 20px;
+    border-top: 1px solid var(--el-border-color-light);
+}
+
+// ── Mobile cards ─────────────────────────────────────────────
+.lp-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 80px;
+}
+
+.lp-mob-page {
+    display: flex;
+    justify-content: center;
+    padding: 12px 0 16px;
+}
+
+// ── Card footer ───────────────────────────────────────────────
+.card-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--el-border-color-lighter);
+}
+
+// ── FAB ───────────────────────────────────────────────────────
+.lp-fab {
+    position: fixed;
+    bottom: calc(56px + env(safe-area-inset-bottom) + 16px);
+    right: 16px;
+    width: 56px;
+    height: 56px;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+    z-index: 999;
+
+    &:active {
+        transform: scale(0.95);
+    }
+
+    :deep(.el-icon) {
+        font-size: 24px;
+    }
+}
+
+// ── Common helpers ────────────────────────────────────────────
+.code-tag {
+    display: inline-flex;
+    align-items: center;
+    font-family: monospace;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--el-color-primary);
+}
+
+.contact-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.text-amount {
+    font-weight: 700;
+    color: var(--el-color-primary);
+}
+
+.text-paid {
+    font-weight: 600;
+    color: var(--el-color-success);
+}
+
+.text-balance {
+    font-weight: 700;
+    color: var(--el-color-danger);
+}
+
+.text-muted {
+    color: var(--el-text-color-placeholder);
+    font-style: italic;
+}
+
+// ── Dialog footer ─────────────────────────────────────────────
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    @media (max-width: 767px) {
+        flex-direction: column-reverse;
+        gap: 8px;
+
+        .el-button {
+            width: 100%;
+            margin: 0;
+        }
+    }
+}
